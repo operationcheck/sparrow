@@ -122,4 +122,3 @@ main().catch((err) => {
   console.error("Firefox build failed:", err);
   process.exit(1);
 });
-
