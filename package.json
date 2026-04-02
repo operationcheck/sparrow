@@ -1,5 +1,5 @@
 {
-  "name": "miro",
+  "name": "atlas",
   "version": "1.0.6",
   "description": "An auto-play tool for report videos with the latest features",
   "type": "module",
@@ -30,9 +30,6 @@
     "terser": "^5.39.0",
     "typescript": "5.8.3",
     "vite": "6.3.4"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": ["@biomejs/biome", "esbuild"]
   },
   "dependencies": {
     "lucide-react": "^0.507.0",
