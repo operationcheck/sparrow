@@ -86,7 +86,9 @@ function Options() {
   const [shortcutPreviousSection, setShortcutPreviousSection] = useState("Ctrl+Shift+ArrowUp");
   const [shortcutNextSection, setShortcutNextSection] = useState("Ctrl+Shift+ArrowDown");
   const [shortcutSeekSeconds, setShortcutSeekSeconds] = useState(10);
-  const [recordingShortcutField, setRecordingShortcutField] = useState<ShortcutFieldKey | null>(null);
+  const [recordingShortcutField, setRecordingShortcutField] = useState<ShortcutFieldKey | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!recordingShortcutField) {
@@ -445,11 +447,7 @@ function Options() {
 
     return (
       <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "8px" }}>
-        <input
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder={placeholder}
-        />
+        <input value={value} onChange={(e) => setValue(e.target.value)} placeholder={placeholder} />
         <Button
           onClick={() => {
             if (isRecording) {
