@@ -54,7 +54,7 @@ const DEFAULT_SETTINGS: FeatureSettings = {
   },
 };
 
-const INPUT_SELECTOR = "input, textarea, [contenteditable='true']";
+const INPUT_SELECTOR = "input, textarea, [contenteditable]";
 const WORD_COUNT_CLASS = "atlas-word-count";
 const MOVIE_TIME_ROOT_ID = "atlas-movie-time-root";
 /** Course / monthly summary row (avoid duplicate id with chapter block). */
@@ -63,7 +63,7 @@ const STICKY_STYLE_ID = "atlas-modify-sticky-movie-style";
 const REFERENCE_SELECTOR = "iframe[aria-label='補助テキスト']";
 const MATHJAX_SELECTOR = "span.MathJax_CHTML";
 /** Prefer nested player video (matches current ZEN DOM). */
-const DEFAULT_VIDEO_SELECTOR = "#video-player video, #video-player, video";
+const DEFAULT_VIDEO_SELECTOR = "#video-player video, video";
 const SECTION_LIST_SELECTOR =
   ":is([aria-label$='教材リスト'], [aria-label='レポートリスト']) > li > :nth-child(1) > div:nth-child(1)";
 
@@ -251,12 +251,14 @@ function getVideoElement(): HTMLVideoElement | null {
 
 function executeVideoShortcut(name: keyof ShortcutConfig): boolean {
   const video = getVideoElement();
-  if (!video) {
+  const playerContainer = document.querySelector<HTMLElement>("#video-player");
+  if (!video && name !== "fullscreen") {
     return false;
   }
 
   switch (name) {
     case "playOrPause":
+      if (!video) return false;
       if (video.paused) {
         void video.play();
       } else {
@@ -264,22 +266,30 @@ function executeVideoShortcut(name: keyof ShortcutConfig): boolean {
       }
       return true;
     case "seekBackward":
+      if (!video) return false;
       video.currentTime = Math.max(0, video.currentTime - currentSettings.shortcuts.seekSeconds);
       return true;
     case "seekForward":
+      if (!video) return false;
       video.currentTime = video.currentTime + currentSettings.shortcuts.seekSeconds;
       return true;
     case "mute":
+      if (!video) return false;
       video.muted = !video.muted;
       return true;
     case "fullscreen":
       if (document.fullscreenElement) {
         void document.exitFullscreen();
       } else {
-        void video.requestFullscreen();
+        const fullscreenTarget = video ?? playerContainer;
+        if (!fullscreenTarget) {
+          return false;
+        }
+        void fullscreenTarget.requestFullscreen();
       }
       return true;
     case "pictureInPicture":
+      if (!video) return false;
       if (!document.pictureInPictureEnabled) {
         return false;
       }
@@ -1070,8 +1080,11 @@ export default defineContentScript({
   runAt: "document_idle",
   main() {
     const handleKeydown = (event: KeyboardEvent) => {
+      if (event.isComposing) {
+        return;
+      }
       const target = event.target;
-      if (target instanceof Element && target.matches(INPUT_SELECTOR)) {
+      if (target instanceof Element && target.closest(INPUT_SELECTOR)) {
         return;
       }
       if (!currentSettings.keyboardShortcutsEnabled) {
@@ -1079,10 +1092,12 @@ export default defineContentScript({
       }
       if (runKeyboardShortcut(event)) {
         event.preventDefault();
+        event.stopPropagation();
       }
     };
 
-    document.addEventListener("keydown", handleKeydown);
+    window.addEventListener("keydown", handleKeydown, true);
+    document.addEventListener("keydown", handleKeydown, true);
 
     const load = async () => {
       const data = await chrome.storage.local.get();
@@ -1104,7 +1119,8 @@ export default defineContentScript({
     }, 2000);
 
     return () => {
-      document.removeEventListener("keydown", handleKeydown);
+      window.removeEventListener("keydown", handleKeydown, true);
+      document.removeEventListener("keydown", handleKeydown, true);
       videoProgressCleanup?.();
       videoProgressCleanup = null;
       if (movieTimeDebounceTimer !== null) {
