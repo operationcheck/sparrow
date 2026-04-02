@@ -944,7 +944,6 @@ async function updateMovieTimeSummary(): Promise<void> {
         upsertOverallSummary(summaryParent, merged);
       }
     }
-
   } catch {
     // Keep silent to avoid breaking the rest of the extension.
   }
