@@ -59,7 +59,6 @@ const WORD_COUNT_CLASS = "atlas-word-count";
 const MOVIE_TIME_ROOT_ID = "atlas-movie-time-root";
 /** Course / monthly summary row (avoid duplicate id with chapter block). */
 const MOVIE_TIME_SUMMARY_ID = "atlas-movie-time-summary";
-const MOVIE_TIME_BADGE_CLASS = "atlas-movie-time-badge";
 const STICKY_STYLE_ID = "atlas-modify-sticky-movie-style";
 const REFERENCE_SELECTOR = "iframe[aria-label='補助テキスト']";
 const MATHJAX_SELECTOR = "span.MathJax_CHTML";
@@ -75,7 +74,6 @@ const TYPE_MOVIE_ROUNDED_PLUS = "movie-rounded-plus";
 // Movie-time selectors (aligned with ZEN pages' aria-label structure)
 const COURSE_CHAPTER_ANCHORS_SELECTOR = '[aria-label="チャプター一覧"] a:has(h4)';
 const MONTHLY_REPORTS_CHAPTER_ANCHORS_SELECTOR = 'a:has([aria-label^="進捗度"])';
-const MY_COURSES_COURSE_ANCHORS_SELECTOR = '[aria-label="コース一覧"] a:has(h4)';
 const COURSE_SUMMARY_PARENT_SELECTOR = '[type="flow"] > [direction="column"] > [direction="row"]';
 /** zen-study-plus fallback first; then stricter variants for DOM changes. */
 const CHAPTER_PARENT_SELECTORS: string[] = [
@@ -165,30 +163,6 @@ async function resolveChapterTimeProgress(chapterUrl: string): Promise<TimeProgr
     return stored;
   }
   return null;
-}
-
-function courseIdFromPath(pathname: string): number | null {
-  const m = pathname.match(/^\/courses\/(\d+)/);
-  return m ? Number(m[1]) : null;
-}
-
-/** My courses: sum all stored chapter rows for this course (user must have opened chapters). */
-async function mergeStoredChaptersForCourse(courseUrl: string): Promise<TimeProgress | null> {
-  const cid = courseIdFromPath(new URL(courseUrl, location.origin).pathname);
-  if (cid == null) {
-    return null;
-  }
-  const prefix = `/courses/${cid}/chapters/`;
-  const map = await loadChapterProgressMap();
-  const tps = Object.entries(map)
-    .filter(([k]) => k.startsWith(prefix))
-    .map(([, v]) => v)
-    .filter((tp) => isUsableTimeProgress(tp));
-  if (tps.length === 0) {
-    return null;
-  }
-  const merged = mergeTimeProgressList(tps);
-  return isUsableTimeProgress(merged) ? merged : null;
 }
 
 function parseStorage(data: Record<string, unknown>): FeatureSettings {
@@ -470,16 +444,8 @@ function formatDuration(totalSec: number): string {
   return formatTime(Math.max(0, totalSec));
 }
 
-function isMyCoursesPage(url: URL): boolean {
-  return /^\/my_course\/?$/.test(url.pathname);
-}
-
 function isChapterUrl(url: URL): boolean {
   return /^\/courses\/\d+\/chapters\/\d+(?:\/[^/]+\/\d+)?\/?$/.test(url.pathname);
-}
-
-function isCourseUrl(url: URL): boolean {
-  return /^\/courses\/\d+\/?$/.test(url.pathname);
 }
 
 function extractDurationFromText(text: string): number {
@@ -668,18 +634,6 @@ function formatRemainingLine(tp: TimeProgress): string {
   return "";
 }
 
-/** Compact line for list badges when 必須 is empty but 全動画 exists. */
-function formatBadgeLine(tp: TimeProgress): string {
-  if (tp.primary.goal > 0) {
-    return formatPrimaryLine(tp);
-  }
-  const all = getGroupByLabel(tp, "全動画");
-  if (all.goal > 0) {
-    return `${formatTime(all.current)} / ${formatTime(all.goal)}`;
-  }
-  return formatPrimaryLine(tp);
-}
-
 function serializeTimeProgress(tp: TimeProgress): string {
   return JSON.stringify({
     primary: tp.primary,
@@ -696,11 +650,7 @@ function shouldIgnoreMovieTimeMutations(records: MutationRecord[]): boolean {
     if (!(target instanceof Element)) {
       return false;
     }
-    if (
-      target.closest(`#${MOVIE_TIME_ROOT_ID}`) ||
-      target.closest(`#${MOVIE_TIME_SUMMARY_ID}`) ||
-      target.closest(`.${MOVIE_TIME_BADGE_CLASS}`)
-    ) {
+    if (target.closest(`#${MOVIE_TIME_ROOT_ID}`) || target.closest(`#${MOVIE_TIME_SUMMARY_ID}`)) {
       return true;
     }
     return false;
@@ -715,16 +665,6 @@ function ensureMovieTimeStyles(): void {
   const style = document.createElement("style");
   style.id = id;
   style.textContent = `
-    .${MOVIE_TIME_BADGE_CLASS}{
-      margin-left: 8px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      font-size: 12px;
-      line-height: 1.4;
-      background: rgba(0,0,0,0.06);
-      color: rgba(0,0,0,0.75);
-      white-space: nowrap;
-    }
     .atlas-movie-time-root{
       position: absolute;
       top: 50%;
@@ -852,32 +792,25 @@ function upsertChapterMovieTimeBlock(parent: HTMLElement, tp: TimeProgress): voi
   }
 }
 
-function appendBadgeToAnchor(anchor: Element, tp: TimeProgress): void {
-  if (tp.primary.goal <= 0 && !tp.groups.some((g) => g.goal > 0)) {
-    return;
-  }
-  ensureMovieTimeStyles();
-
-  let badge = anchor.querySelector(`.${MOVIE_TIME_BADGE_CLASS}`);
-  if (!badge) {
-    badge = document.createElement("span");
-    badge.className = MOVIE_TIME_BADGE_CLASS;
-    anchor.appendChild(badge);
-  }
-  badge.textContent = formatBadgeLine(tp);
-}
-
 function upsertOverallSummary(parent: Element, tp: TimeProgress): void {
   ensureMovieTimeStyles();
   let summary = parent.querySelector<HTMLSpanElement>(`#${MOVIE_TIME_SUMMARY_ID}`);
   if (!summary) {
     summary = document.createElement("span");
     summary.id = MOVIE_TIME_SUMMARY_ID;
-    summary.className = MOVIE_TIME_BADGE_CLASS;
+    summary.style.marginLeft = "8px";
+    summary.style.padding = "2px 6px";
+    summary.style.borderRadius = "999px";
+    summary.style.fontSize = "12px";
+    summary.style.lineHeight = "1.4";
+    summary.style.background = "rgba(0,0,0,0.06)";
+    summary.style.color = "rgba(0,0,0,0.75)";
+    summary.style.whiteSpace = "nowrap";
     parent.appendChild(summary);
   }
   const rem = formatRemainingLine(tp);
-  summary.textContent = rem ? `${formatBadgeLine(tp)} ・ ${rem}` : formatBadgeLine(tp);
+  const main = formatPrimaryLine(tp);
+  summary.textContent = rem ? `${main} ・ ${rem}` : main;
 }
 
 function findChapterMovieTimeParent(): HTMLElement | null {
@@ -974,11 +907,6 @@ async function updateMovieTimeSummary(): Promise<void> {
       const merged = mergeTimeProgressList(
         items.map((i) => i.tp).filter((x): x is TimeProgress => x != null),
       );
-      items.forEach(({ anchor, tp }) => {
-        if (tp) {
-          appendBadgeToAnchor(anchor, tp);
-        }
-      });
       const summaryParent = document.querySelector(COURSE_SUMMARY_PARENT_SELECTOR);
       if (
         summaryParent &&
@@ -1015,38 +943,8 @@ async function updateMovieTimeSummary(): Promise<void> {
       ) {
         upsertOverallSummary(summaryParent, merged);
       }
-      items.forEach(({ anchor, tp }) => {
-        if (tp) {
-          appendBadgeToAnchor(anchor, tp);
-        }
-      });
     }
 
-    if (isMyCoursesPage(pageUrl)) {
-      const myCourseAnchors = document.querySelectorAll<HTMLAnchorElement>(
-        MY_COURSES_COURSE_ANCHORS_SELECTOR,
-      );
-      if (myCourseAnchors.length > 0) {
-        const items = await Promise.all(
-          Array.from(myCourseAnchors).map(async (anchor) => {
-            const courseUrl = new URL(anchor.href, location.origin).toString();
-            if (!isCourseUrl(new URL(courseUrl))) {
-              return { anchor, tp: null as TimeProgress | null };
-            }
-            const tp = await mergeStoredChaptersForCourse(courseUrl);
-            return { anchor, tp };
-          }),
-        );
-        if (myToken !== movieTimeRefreshToken) {
-          return;
-        }
-        items.forEach(({ anchor, tp }) => {
-          if (tp) {
-            appendBadgeToAnchor(anchor, tp);
-          }
-        });
-      }
-    }
   } catch {
     // Keep silent to avoid breaking the rest of the extension.
   }
