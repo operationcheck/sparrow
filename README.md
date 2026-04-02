@@ -1,6 +1,20 @@
-# Atlas
+<p align="center">
+  <img alt="Atlas Logo" src="./docs/logo.png" width="100" />
+</p>
 
-## Overview
+<h3 align="center">Atlas</h3>
+
+<p align="center">
+A Chrome extension that supports video learning at N High School.
+<br />
+<br />
+<a href="#introduction"><strong>Introduction</strong></a> ·
+<a href="#tech-stack"><strong>Tech Stack</strong></a> ·
+<a href="#installation--usage"><strong>Installation & Usage</strong></a>
+</p>
+
+
+## Introduction
 
 > **Note:** It is recommended that you fork the repository. Sometimes we keep it private.
 
@@ -17,7 +31,7 @@ This extension makes it easier to watch videos on N Prep! When a video ends, it 
 - **Background Playback**: Continue video progression even when tab is not active
 - **Return to Chapter**: Automatically navigate back to chapter overview after completion
 
-## Technology Stack
+## Tech Stack
 
 - React 19 + TypeScript
 - WXT for web extension development (built on Vite)
