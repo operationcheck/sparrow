@@ -59,23 +59,23 @@ The extension operates entirely within the browser's security sandbox and follow
 ### Prerequisites
 
 * Node.js 20 or higher
-* pnpm package manager
+* Bun package manager
 
 ### Build Instructions
 
 Install the required packages:
 ```bash
-pnpm install
+bun install
 ```
 
 Build the extension:
 ```bash
-pnpm build
+bun run build
 ```
 
 Build Firefox version:
 ```bash
-pnpm build:firefox
+bun run build:firefox
 ```
 
 ### Chrome Installation
@@ -141,30 +141,30 @@ Access via extension icon or right-click menu:
 ```bash
 git clone https://github.com/operationcheck/atlas.git
 cd atlas
-pnpm install
+bun install
 ```
 
 2. Start development server:
 ```bash
-pnpm dev
+bun run dev
 ```
 
 3. Build for production:
 ```bash
-pnpm build
+bun run build
 ```
 
 ### Code Quality
 
 ```bash
 # Type checking
-pnpm typecheck
+bun run typecheck
 
 # Linting
-pnpm lint
+bun run lint
 
 # Code formatting
-pnpm format
+bun run format
 ```
 
 ## License

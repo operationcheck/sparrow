@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "build:firefox": "pnpm build && node firefox.cjs",
+    "build:firefox": "bun run build && bun firefox.cjs",
     "preview": "vite preview",
+    "typecheck": "tsc",
     "check": "biome check ./src",
     "check:write": "biome check --write ./src",
     "format": "biome format .",
@@ -17,7 +18,7 @@
   "keywords": ["education", "chrome-extension", "auto-play"],
   "author": "operationcheck",
   "license": "MIT",
-  "packageManager": "pnpm@10.10.0",
+  "packageManager": "bun",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@crxjs/vite-plugin": "2.0.0-beta.32",
