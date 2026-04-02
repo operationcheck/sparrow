@@ -21,6 +21,27 @@ function Options() {
   const [notifyVideoCompleted, setNotifyVideoCompleted] = useState(false);
   const [notifyAllVideosCompleted, setNotifyAllVideosCompleted] = useState(false);
   const [notifyTestDetected, setNotifyTestDetected] = useState(true);
+  const [movieTimeEnabled, setMovieTimeEnabled] = useState(true);
+  const [wordCountEnabled, setWordCountEnabled] = useState(true);
+  const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = useState(true);
+  const [disableMathJaxFocusEnabled, setDisableMathJaxFocusEnabled] = useState(true);
+  const [referenceSizeAdjustmentEnabled, setReferenceSizeAdjustmentEnabled] = useState(true);
+  const [referenceAdditionalHeight, setReferenceAdditionalHeight] = useState(0);
+  const [modifyStickyMovieEnabled, setModifyStickyMovieEnabled] = useState(true);
+  const [modifyStickyMovieMode, setModifyStickyMovieMode] = useState<
+    "original_modified" | "disable"
+  >("original_modified");
+  const [shortcutPlayOrPause, setShortcutPlayOrPause] = useState("K");
+  const [shortcutSeekBackward, setShortcutSeekBackward] = useState("J");
+  const [shortcutSeekForward, setShortcutSeekForward] = useState("L");
+  const [shortcutMute, setShortcutMute] = useState("M");
+  const [shortcutFullscreen, setShortcutFullscreen] = useState("F");
+  const [shortcutPictureInPicture, setShortcutPictureInPicture] = useState("P");
+  const [shortcutTheaterMode, setShortcutTheaterMode] = useState("T");
+  const [shortcutExpandSection, setShortcutExpandSection] = useState("Ctrl+B");
+  const [shortcutPreviousSection, setShortcutPreviousSection] = useState("Ctrl+Shift+ArrowUp");
+  const [shortcutNextSection, setShortcutNextSection] = useState("Ctrl+Shift+ArrowDown");
+  const [shortcutSeekSeconds, setShortcutSeekSeconds] = useState(10);
 
   useEffect(() => {
     // Listen for changes in storage
@@ -66,6 +87,68 @@ function Options() {
       if (changes.notifyTestDetected !== undefined) {
         setNotifyTestDetected(changes.notifyTestDetected.newValue as boolean);
       }
+      if (changes.movieTimeEnabled !== undefined) {
+        setMovieTimeEnabled(changes.movieTimeEnabled.newValue as boolean);
+      }
+      if (changes.wordCountEnabled !== undefined) {
+        setWordCountEnabled(changes.wordCountEnabled.newValue as boolean);
+      }
+      if (changes.keyboardShortcutsEnabled !== undefined) {
+        setKeyboardShortcutsEnabled(changes.keyboardShortcutsEnabled.newValue as boolean);
+      }
+      if (changes.disableMathJaxFocusEnabled !== undefined) {
+        setDisableMathJaxFocusEnabled(changes.disableMathJaxFocusEnabled.newValue as boolean);
+      }
+      if (changes.referenceSizeAdjustmentEnabled !== undefined) {
+        setReferenceSizeAdjustmentEnabled(
+          changes.referenceSizeAdjustmentEnabled.newValue as boolean,
+        );
+      }
+      if (changes.referenceAdditionalHeight !== undefined) {
+        setReferenceAdditionalHeight(changes.referenceAdditionalHeight.newValue as number);
+      }
+      if (changes.modifyStickyMovieEnabled !== undefined) {
+        setModifyStickyMovieEnabled(changes.modifyStickyMovieEnabled.newValue as boolean);
+      }
+      if (changes.modifyStickyMovieMode !== undefined) {
+        setModifyStickyMovieMode(
+          (changes.modifyStickyMovieMode.newValue as "original_modified" | "disable") ??
+            "original_modified",
+        );
+      }
+      if (changes.shortcutPlayOrPause !== undefined) {
+        setShortcutPlayOrPause(changes.shortcutPlayOrPause.newValue as string);
+      }
+      if (changes.shortcutSeekBackward !== undefined) {
+        setShortcutSeekBackward(changes.shortcutSeekBackward.newValue as string);
+      }
+      if (changes.shortcutSeekForward !== undefined) {
+        setShortcutSeekForward(changes.shortcutSeekForward.newValue as string);
+      }
+      if (changes.shortcutMute !== undefined) {
+        setShortcutMute(changes.shortcutMute.newValue as string);
+      }
+      if (changes.shortcutFullscreen !== undefined) {
+        setShortcutFullscreen(changes.shortcutFullscreen.newValue as string);
+      }
+      if (changes.shortcutPictureInPicture !== undefined) {
+        setShortcutPictureInPicture(changes.shortcutPictureInPicture.newValue as string);
+      }
+      if (changes.shortcutTheaterMode !== undefined) {
+        setShortcutTheaterMode(changes.shortcutTheaterMode.newValue as string);
+      }
+      if (changes.shortcutExpandSection !== undefined) {
+        setShortcutExpandSection(changes.shortcutExpandSection.newValue as string);
+      }
+      if (changes.shortcutPreviousSection !== undefined) {
+        setShortcutPreviousSection(changes.shortcutPreviousSection.newValue as string);
+      }
+      if (changes.shortcutNextSection !== undefined) {
+        setShortcutNextSection(changes.shortcutNextSection.newValue as string);
+      }
+      if (changes.shortcutSeekSeconds !== undefined) {
+        setShortcutSeekSeconds(changes.shortcutSeekSeconds.newValue as number);
+      }
     };
 
     browser.storage.onChanged.addListener(handleStorageChange);
@@ -83,6 +166,25 @@ function Options() {
         "notifyVideoCompleted",
         "notifyAllVideosCompleted",
         "notifyTestDetected",
+        "movieTimeEnabled",
+        "wordCountEnabled",
+        "keyboardShortcutsEnabled",
+        "disableMathJaxFocusEnabled",
+        "referenceSizeAdjustmentEnabled",
+        "referenceAdditionalHeight",
+        "modifyStickyMovieEnabled",
+        "modifyStickyMovieMode",
+        "shortcutPlayOrPause",
+        "shortcutSeekBackward",
+        "shortcutSeekForward",
+        "shortcutMute",
+        "shortcutFullscreen",
+        "shortcutPictureInPicture",
+        "shortcutTheaterMode",
+        "shortcutExpandSection",
+        "shortcutPreviousSection",
+        "shortcutNextSection",
+        "shortcutSeekSeconds",
       ]);
 
       if (result.enabled !== undefined) {
@@ -117,6 +219,63 @@ function Options() {
       if (result.notifyTestDetected !== undefined) {
         setNotifyTestDetected(result.notifyTestDetected as boolean);
       }
+      if (result.movieTimeEnabled !== undefined) {
+        setMovieTimeEnabled(result.movieTimeEnabled as boolean);
+      }
+      if (result.wordCountEnabled !== undefined) {
+        setWordCountEnabled(result.wordCountEnabled as boolean);
+      }
+      if (result.keyboardShortcutsEnabled !== undefined) {
+        setKeyboardShortcutsEnabled(result.keyboardShortcutsEnabled as boolean);
+      }
+      if (result.disableMathJaxFocusEnabled !== undefined) {
+        setDisableMathJaxFocusEnabled(result.disableMathJaxFocusEnabled as boolean);
+      }
+      if (result.referenceSizeAdjustmentEnabled !== undefined) {
+        setReferenceSizeAdjustmentEnabled(result.referenceSizeAdjustmentEnabled as boolean);
+      }
+      if (result.referenceAdditionalHeight !== undefined) {
+        setReferenceAdditionalHeight(result.referenceAdditionalHeight as number);
+      }
+      if (result.modifyStickyMovieEnabled !== undefined) {
+        setModifyStickyMovieEnabled(result.modifyStickyMovieEnabled as boolean);
+      }
+      if (result.modifyStickyMovieMode !== undefined) {
+        setModifyStickyMovieMode(result.modifyStickyMovieMode as "original_modified" | "disable");
+      }
+      if (result.shortcutPlayOrPause !== undefined) {
+        setShortcutPlayOrPause(result.shortcutPlayOrPause as string);
+      }
+      if (result.shortcutSeekBackward !== undefined) {
+        setShortcutSeekBackward(result.shortcutSeekBackward as string);
+      }
+      if (result.shortcutSeekForward !== undefined) {
+        setShortcutSeekForward(result.shortcutSeekForward as string);
+      }
+      if (result.shortcutMute !== undefined) {
+        setShortcutMute(result.shortcutMute as string);
+      }
+      if (result.shortcutFullscreen !== undefined) {
+        setShortcutFullscreen(result.shortcutFullscreen as string);
+      }
+      if (result.shortcutPictureInPicture !== undefined) {
+        setShortcutPictureInPicture(result.shortcutPictureInPicture as string);
+      }
+      if (result.shortcutTheaterMode !== undefined) {
+        setShortcutTheaterMode(result.shortcutTheaterMode as string);
+      }
+      if (result.shortcutExpandSection !== undefined) {
+        setShortcutExpandSection(result.shortcutExpandSection as string);
+      }
+      if (result.shortcutPreviousSection !== undefined) {
+        setShortcutPreviousSection(result.shortcutPreviousSection as string);
+      }
+      if (result.shortcutNextSection !== undefined) {
+        setShortcutNextSection(result.shortcutNextSection as string);
+      }
+      if (result.shortcutSeekSeconds !== undefined) {
+        setShortcutSeekSeconds(result.shortcutSeekSeconds as number);
+      }
     })();
     return () => {
       browser.storage.onChanged.removeListener(handleStorageChange);
@@ -136,6 +295,25 @@ function Options() {
         notifyVideoCompleted,
         notifyAllVideosCompleted,
         notifyTestDetected,
+        movieTimeEnabled,
+        wordCountEnabled,
+        keyboardShortcutsEnabled,
+        disableMathJaxFocusEnabled,
+        referenceSizeAdjustmentEnabled,
+        referenceAdditionalHeight,
+        modifyStickyMovieEnabled,
+        modifyStickyMovieMode,
+        shortcutPlayOrPause,
+        shortcutSeekBackward,
+        shortcutSeekForward,
+        shortcutMute,
+        shortcutFullscreen,
+        shortcutPictureInPicture,
+        shortcutTheaterMode,
+        shortcutExpandSection,
+        shortcutPreviousSection,
+        shortcutNextSection,
+        shortcutSeekSeconds,
       })
       .then(() => {
         alert("Settings have been saved");
@@ -273,6 +451,165 @@ function Options() {
             />
             Notify when a test is detected (default: ON)
           </label>
+        </div>
+      </div>
+      <div style={{ marginBottom: "20px" }}>
+        <h2>ZEN Study+ Imported Features</h2>
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <input
+              type="checkbox"
+              checked={movieTimeEnabled}
+              onChange={(e) => setMovieTimeEnabled(e.target.checked)}
+            />
+            Show total video time on chapter lists
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <input
+              type="checkbox"
+              checked={wordCountEnabled}
+              onChange={(e) => setWordCountEnabled(e.target.checked)}
+            />
+            Show word count while typing
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <input
+              type="checkbox"
+              checked={keyboardShortcutsEnabled}
+              onChange={(e) => setKeyboardShortcutsEnabled(e.target.checked)}
+            />
+            Enable custom keyboard shortcuts
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <input
+              type="checkbox"
+              checked={disableMathJaxFocusEnabled}
+              onChange={(e) => setDisableMathJaxFocusEnabled(e.target.checked)}
+            />
+            Disable MathJax focus by Tab key
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <input
+              type="checkbox"
+              checked={referenceSizeAdjustmentEnabled}
+              onChange={(e) => setReferenceSizeAdjustmentEnabled(e.target.checked)}
+            />
+            Enable reference/subtitle size adjustment
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ display: "block", marginBottom: "8px" }}>
+            Reference additional height
+          </label>
+          <input
+            type="number"
+            value={referenceAdditionalHeight}
+            onChange={(e) => setReferenceAdditionalHeight(Number(e.target.value))}
+            style={{ width: "100%", height: "32px", padding: "0 8px", boxSizing: "border-box" }}
+          />
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <input
+              type="checkbox"
+              checked={modifyStickyMovieEnabled}
+              onChange={(e) => setModifyStickyMovieEnabled(e.target.checked)}
+            />
+            Enable sticky movie behavior fix
+          </label>
+        </div>
+        <div style={{ marginBottom: "20px" }}>
+          <label htmlFor="stickyMovieMode" style={{ display: "block", marginBottom: "8px" }}>
+            Sticky movie mode
+          </label>
+          <select
+            id="stickyMovieMode"
+            value={modifyStickyMovieMode}
+            onChange={(e) =>
+              setModifyStickyMovieMode(e.target.value as "original_modified" | "disable")
+            }
+            style={{
+              width: "100%",
+              height: "32px",
+              padding: "0 8px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+              boxSizing: "border-box",
+            }}
+          >
+            <option value="original_modified">Original modified</option>
+            <option value="disable">Disable sticky outside theater mode</option>
+          </select>
+        </div>
+      </div>
+      <div style={{ marginBottom: "20px" }}>
+        <h2>Shortcut Settings</h2>
+        <p style={{ marginTop: 0 }}>Examples: K, Ctrl+B, Ctrl+Shift+ArrowUp</p>
+        <div style={{ display: "grid", gap: "10px" }}>
+          <input
+            value={shortcutPlayOrPause}
+            onChange={(e) => setShortcutPlayOrPause(e.target.value)}
+            placeholder="Play/Pause"
+          />
+          <input
+            value={shortcutSeekBackward}
+            onChange={(e) => setShortcutSeekBackward(e.target.value)}
+            placeholder="Seek backward"
+          />
+          <input
+            value={shortcutSeekForward}
+            onChange={(e) => setShortcutSeekForward(e.target.value)}
+            placeholder="Seek forward"
+          />
+          <input
+            value={shortcutMute}
+            onChange={(e) => setShortcutMute(e.target.value)}
+            placeholder="Mute"
+          />
+          <input
+            value={shortcutFullscreen}
+            onChange={(e) => setShortcutFullscreen(e.target.value)}
+            placeholder="Fullscreen"
+          />
+          <input
+            value={shortcutPictureInPicture}
+            onChange={(e) => setShortcutPictureInPicture(e.target.value)}
+            placeholder="Picture in picture"
+          />
+          <input
+            value={shortcutTheaterMode}
+            onChange={(e) => setShortcutTheaterMode(e.target.value)}
+            placeholder="Theater mode"
+          />
+          <input
+            value={shortcutExpandSection}
+            onChange={(e) => setShortcutExpandSection(e.target.value)}
+            placeholder="Expand section"
+          />
+          <input
+            value={shortcutPreviousSection}
+            onChange={(e) => setShortcutPreviousSection(e.target.value)}
+            placeholder="Previous section"
+          />
+          <input
+            value={shortcutNextSection}
+            onChange={(e) => setShortcutNextSection(e.target.value)}
+            placeholder="Next section"
+          />
+          <input
+            type="number"
+            value={shortcutSeekSeconds}
+            onChange={(e) => setShortcutSeekSeconds(Number(e.target.value))}
+            placeholder="Seek seconds"
+          />
         </div>
       </div>
       <div style={{ display: "flex", alignItems: "center" }}>
