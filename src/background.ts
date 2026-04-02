@@ -9,12 +9,9 @@ browser.runtime.onMessage.addListener((message, _, sendResponse) => {
       "title" in message &&
       "notificationMessage" in message
     ) {
-      const title =
-        typeof message.title === "string" ? message.title : "Atlas Extension";
+      const title = typeof message.title === "string" ? message.title : "Atlas Extension";
       const notificationMessage =
-        typeof message.notificationMessage === "string"
-          ? message.notificationMessage
-          : "";
+        typeof message.notificationMessage === "string" ? message.notificationMessage : "";
 
       // Since notification permission is declared in manifest.json, we can create notifications directly
       createNotificationNow();
@@ -30,7 +27,7 @@ browser.runtime.onMessage.addListener((message, _, sendResponse) => {
           })
           .then(() => {
             logger.info(
-              `Notification created with ID: ${notificationId}, message: ${notificationMessage}`
+              `Notification created with ID: ${notificationId}, message: ${notificationMessage}`,
             );
             sendResponse({ success: true, notificationId });
           })
@@ -186,91 +183,71 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     } else if (info.menuItemId === "copyExercise") {
       // Send message to content script to copy exercise
       if (tab?.id) {
-        browser.tabs
-          .sendMessage(tab.id, { action: "copyExercise" })
-          .catch((error) => {
-            logger.error(`Failed to send copyExercise message: ${error}`);
-          });
+        browser.tabs.sendMessage(tab.id, { action: "copyExercise" }).catch((error) => {
+          logger.error(`Failed to send copyExercise message: ${error}`);
+        });
       }
     } else if (info.menuItemId === "askChatGPT") {
       // Send message to content script to ask ChatGPT about exercise
       if (tab?.id) {
-        browser.tabs
-          .sendMessage(tab.id, { action: "askChatGPT" })
-          .catch((error) => {
-            logger.error(`Failed to send askChatGPT message: ${error}`);
-          });
+        browser.tabs.sendMessage(tab.id, { action: "askChatGPT" }).catch((error) => {
+          logger.error(`Failed to send askChatGPT message: ${error}`);
+        });
       }
     } else if (info.menuItemId === "askGemini") {
       // Send message to content script to ask Gemini about exercise
       if (tab?.id) {
-        browser.tabs
-          .sendMessage(tab.id, { action: "askGemini" })
-          .catch((error) => {
-            logger.error(`Failed to send askGemini message: ${error}`);
-          });
+        browser.tabs.sendMessage(tab.id, { action: "askGemini" }).catch((error) => {
+          logger.error(`Failed to send askGemini message: ${error}`);
+        });
       }
     } else if (info.menuItemId === "askClaude") {
       // Send message to content script to ask Claude about exercise
       if (tab?.id) {
-        browser.tabs
-          .sendMessage(tab.id, { action: "askClaude" })
-          .catch((error) => {
-            logger.error(`Failed to send askClaude message: ${error}`);
-          });
+        browser.tabs.sendMessage(tab.id, { action: "askClaude" }).catch((error) => {
+          logger.error(`Failed to send askClaude message: ${error}`);
+        });
       }
     } else if (info.menuItemId === "askGenspark") {
       // Send message to content script to ask Genspark about exercise
       if (tab?.id) {
-        browser.tabs
-          .sendMessage(tab.id, { action: "askGenspark" })
-          .catch((error) => {
-            logger.error(`Failed to send askGenspark message: ${error}`);
-          });
+        browser.tabs.sendMessage(tab.id, { action: "askGenspark" }).catch((error) => {
+          logger.error(`Failed to send askGenspark message: ${error}`);
+        });
       }
     } else if (info.menuItemId === "askFelo") {
       // Send message to content script to ask Felo about exercise
       if (tab?.id) {
-        browser.tabs
-          .sendMessage(tab.id, { action: "askFelo" })
-          .catch((error) => {
-            logger.error(`Failed to send askFelo message: ${error}`);
-          });
+        browser.tabs.sendMessage(tab.id, { action: "askFelo" }).catch((error) => {
+          logger.error(`Failed to send askFelo message: ${error}`);
+        });
       }
     } else if (info.menuItemId === "askGrok") {
       // Send message to content script to ask Grok about exercise
       if (tab?.id) {
-        browser.tabs
-          .sendMessage(tab.id, { action: "askGrok" })
-          .catch((error) => {
-            logger.error(`Failed to send askGrok message: ${error}`);
-          });
+        browser.tabs.sendMessage(tab.id, { action: "askGrok" }).catch((error) => {
+          logger.error(`Failed to send askGrok message: ${error}`);
+        });
       }
     } else if (info.menuItemId === "askPerplexity") {
       // Send message to content script to ask Perplexity about exercise
       if (tab?.id) {
-        browser.tabs
-          .sendMessage(tab.id, { action: "askPerplexity" })
-          .catch((error) => {
-            logger.error(`Failed to send askPerplexity message: ${error}`);
-          });
+        browser.tabs.sendMessage(tab.id, { action: "askPerplexity" }).catch((error) => {
+          logger.error(`Failed to send askPerplexity message: ${error}`);
+        });
       }
     } else if (info.menuItemId === "copyAIPrompt") {
       // Send message to content script to copy AI prompt
       if (tab?.id) {
-        browser.tabs
-          .sendMessage(tab.id, { action: "copyAIPrompt" })
-          .catch((error) => {
-            logger.error(`Failed to send copyAIPrompt message: ${error}`);
-          });
+        browser.tabs.sendMessage(tab.id, { action: "copyAIPrompt" }).catch((error) => {
+          logger.error(`Failed to send copyAIPrompt message: ${error}`);
+        });
       }
     } else if (info.menuItemId === "returnToChapter") {
       void browser.storage.local.get("returnToChapter").then((data) => {
         const returnToChapter = data.returnToChapter !== true; // Toggle the return to chapter state
         void browser.storage.local.set({ returnToChapter });
-        logger.info(
-          `Return to chapter is now ${returnToChapter ? "enabled" : "disabled"}`
-        );
+        logger.info(`Return to chapter is now ${returnToChapter ? "enabled" : "disabled"}`);
       });
     } else if (info.menuItemId === "hideUI") {
       void browser.storage.local.get("hideUI").then((data) => {

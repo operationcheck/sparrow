@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -65,7 +65,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -99,20 +99,20 @@ jobs:
           name: Release ${{ env.SHORT_SHA }}
           body: |
             ## Atlas Extension Release
-            
+
             **Commit**: `${{ github.sha }}`  
             **Branch**: `${{ github.ref_name }}`  
             **Build Time**: ${{ env.TIMESTAMP }}
-            
+
             ### Downloads
             - **Chrome/Edge**: Download `chrome.zip`
             - **Firefox**: Download `firefox.zip`
-            
+
             ### Installation
             1. Download the appropriate zip file for your browser
             2. Extract the zip file
             3. Load the extension in developer mode
-            
+
             For detailed installation instructions, see the [README](https://github.com/${{ github.repository }}/blob/main/README.md).
           draft: false
           prerelease: false

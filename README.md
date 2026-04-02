@@ -42,7 +42,7 @@ This project builds upon the excellent work of the original Classroom extension 
 > **Note:** For iOS devices, please use the Orion browser
 
 - Chrome
-- Edge  
+- Edge
 - Firefox
 - Orion (Install from Chrome Web Store)
 
@@ -58,22 +58,25 @@ The extension operates entirely within the browser's security sandbox and follow
 
 ### Prerequisites
 
-* Node.js 20 or higher
-* Bun package manager
+- Node.js 20 or higher
+- Bun package manager
 
 ### Build Instructions
 
 Install the required packages:
+
 ```bash
 bun install
 ```
 
 Build the extension:
+
 ```bash
 bun run build
 ```
 
 Build Firefox version:
+
 ```bash
 bun run build:firefox
 ```
@@ -109,11 +112,13 @@ bun run build:firefox
 ## How to Use
 
 ### Basic Operation
+
 1. Navigate to supported educational sites
 2. The extension automatically detects video content and adds controls
 3. Videos will auto-advance when completed (if enabled)
 
 ### Right-Click Menu Options
+
 - **Toggle Extension**: Enable/disable the extension
 - **Copy Exercise**: Extract exercise content to clipboard as Markdown
 - **Ask AI**: Open AI services with formatted exercise questions
@@ -122,13 +127,16 @@ bun run build:firefox
 - **Repository**: View source code and documentation
 
 ### On-Page Controls
+
 - **Extension Toggle**: Enable/disable functionality
 - **Auto-Play Controls**: Manage video progression
 - **Background Play**: Continue when tab is inactive
 - **Settings Button**: Quick access to options page
 
 ### Settings Configuration
+
 Access via extension icon or right-click menu:
+
 - **Video Playback Settings**: Control auto-play behavior
 - **UI Customization**: Button positioning and minimal mode
 - **Advanced Options**: Background play, return behavior
@@ -138,6 +146,7 @@ Access via extension icon or right-click menu:
 ### Development Setup
 
 1. Clone and install dependencies:
+
 ```bash
 git clone https://github.com/operationcheck/atlas.git
 cd atlas
@@ -145,11 +154,13 @@ bun install
 ```
 
 2. Start development server:
+
 ```bash
 bun run dev
 ```
 
 3. Build for production:
+
 ```bash
 bun run build
 ```

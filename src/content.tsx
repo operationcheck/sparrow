@@ -23,12 +23,7 @@ async function sendNotification(title: string, message: string): Promise<void> {
       notificationMessage: message,
     });
 
-    if (
-      response &&
-      typeof response === "object" &&
-      "success" in response &&
-      response.success
-    ) {
+    if (response && typeof response === "object" && "success" in response && response.success) {
       logger.info(`Notification sent: ${message}`);
     } else {
       const errorMsg =
@@ -48,9 +43,7 @@ async function sendNotification(title: string, message: string): Promise<void> {
       error.message &&
       error.message.includes("Extension context invalidated")
     ) {
-      logger.warn(
-        "Extension context invalidated, attempting to use native notification API"
-      );
+      logger.warn("Extension context invalidated, attempting to use native notification API");
 
       // Try using native notification API as fallback
       if ("Notification" in window) {
@@ -63,9 +56,7 @@ async function sendNotification(title: string, message: string): Promise<void> {
             logger.info(`Native notification sent: ${message}`);
             return;
           } catch (nativeError) {
-            logger.error(
-              `Failed to create native notification: ${nativeError}`
-            );
+            logger.error(`Failed to create native notification: ${nativeError}`);
           }
         } else if (Notification.permission !== "denied") {
           try {
@@ -79,9 +70,7 @@ async function sendNotification(title: string, message: string): Promise<void> {
               return;
             }
           } catch (nativeError) {
-            logger.error(
-              `Failed to request notification permission: ${nativeError}`
-            );
+            logger.error(`Failed to request notification permission: ${nativeError}`);
           }
         }
       }
@@ -143,14 +132,10 @@ function findIndex(data: ListItem[]): number {
 function getList(): ListItem[] {
   let elements: NodeListOf<HTMLLIElement>;
 
-  elements = document.querySelectorAll<HTMLLIElement>(
-    'ul[aria-label="必修教材リスト"] > li'
-  );
+  elements = document.querySelectorAll<HTMLLIElement>('ul[aria-label="必修教材リスト"] > li');
 
   if (elements.length === 0) {
-    elements = document.querySelectorAll<HTMLLIElement>(
-      'ul[aria-label="課外教材リスト"] > li'
-    );
+    elements = document.querySelectorAll<HTMLLIElement>('ul[aria-label="課外教材リスト"] > li');
 
     if (elements.length === 0) {
       logger.error("No elements found.");
@@ -159,23 +144,17 @@ function getList(): ListItem[] {
   }
 
   return Array.from(elements).map((element) => {
-    const titleElement = element.querySelector<HTMLSpanElement>(
-      "div div div span:nth-child(2)"
-    );
+    const titleElement = element.querySelector<HTMLSpanElement>("div div div span:nth-child(2)");
     const title = titleElement?.textContent?.trim() ?? "";
     const iconElement = element.querySelector<HTMLElement>("div > svg");
-    const iconColor = iconElement
-      ? window.getComputedStyle(iconElement).color
-      : "";
+    const iconColor = iconElement ? window.getComputedStyle(iconElement).color : "";
     const passed =
       (iconColor === RGB_COLOR_GREEN ||
         element.textContent?.includes("視聴済み") ||
         element.textContent?.includes("理解した")) ??
       false;
     const type =
-      iconElement?.getAttribute("type") === TYPE_MOVIE_ROUNDED_PLUS
-        ? "supplement"
-        : "main";
+      iconElement?.getAttribute("type") === TYPE_MOVIE_ROUNDED_PLUS ? "supplement" : "main";
     return { title, passed, type };
   });
 }
@@ -185,26 +164,24 @@ async function moveElement(number: number): Promise<void> {
     let element: HTMLElement | null = null;
 
     element = document.querySelector<HTMLElement>(
-      `ul[aria-label="必修教材リスト"] li:nth-child(${number}) div`
+      `ul[aria-label="必修教材リスト"] li:nth-child(${number}) div`,
     );
 
     if (element === null) {
       element = document.querySelector<HTMLElement>(
-        `ul[aria-label="課外教材リスト"] li:nth-child(${number}) div`
+        `ul[aria-label="課外教材リスト"] li:nth-child(${number}) div`,
       );
     }
 
     if (element === null) {
-      reject(
-        new Error(`Error: cannot find an element with the number ${number}`)
-      );
+      reject(new Error(`Error: cannot find an element with the number ${number}`));
     } else {
       element.dispatchEvent(
         new MouseEvent("click", {
           bubbles: true,
           cancelable: true,
           view: window,
-        })
+        }),
       );
       resolve();
     }
@@ -214,14 +191,10 @@ async function moveElement(number: number): Promise<void> {
 function getVideoPlayer(): HTMLMediaElement | null {
   try {
     if (videoPlayer === null) {
-      const iframeElement = document.querySelector<HTMLIFrameElement>(
-        'iframe[title="教材"]'
-      );
+      const iframeElement = document.querySelector<HTMLIFrameElement>('iframe[title="教材"]');
       const iframeDocument =
-        iframeElement?.contentDocument ??
-        iframeElement?.contentWindow?.document;
-      videoPlayer =
-        iframeDocument?.querySelector<HTMLMediaElement>("video") ?? null;
+        iframeElement?.contentDocument ?? iframeElement?.contentWindow?.document;
+      videoPlayer = iframeDocument?.querySelector<HTMLMediaElement>("video") ?? null;
     }
     return videoPlayer;
   } catch {
@@ -231,11 +204,7 @@ function getVideoPlayer(): HTMLMediaElement | null {
 
 function handleVideoEnd(): void {
   const now = Date.now();
-  if (
-    isEnabled &&
-    now - lastExecutionTime >= COOL_TIME &&
-    now - lastMovingVideoTime >= COOL_TIME
-  ) {
+  if (isEnabled && now - lastExecutionTime >= COOL_TIME && now - lastMovingVideoTime >= COOL_TIME) {
     lastExecutionTime = Date.now();
     if (document.hidden && !backgroundAutoPlay) {
       if (!previousBackgroundAutoPlay) {
@@ -254,10 +223,7 @@ function handleVideoEnd(): void {
 
     // Send notification for video completion if enabled
     if (notifyVideoCompleted) {
-      void sendNotification(
-        "Video Completed",
-        "Current video has finished playing."
-      );
+      void sendNotification("Video Completed", "Current video has finished playing.");
     }
 
     const list = getList();
@@ -275,7 +241,7 @@ function handleVideoEnd(): void {
       if (notifyAllVideosCompleted) {
         void sendNotification(
           "All Videos Completed",
-          "All videos in this chapter have been completed!"
+          "All videos in this chapter have been completed!",
         );
       }
       window.alert("All videos have been completed.");
@@ -378,12 +344,9 @@ function getExerciseContent(): string | null {
     let exerciseElements = document.querySelectorAll(".exercise");
 
     if (exerciseElements.length === 0) {
-      const iframeElement = document.querySelector<HTMLIFrameElement>(
-        'iframe[title="教材"]'
-      );
+      const iframeElement = document.querySelector<HTMLIFrameElement>('iframe[title="教材"]');
       const iframeDocument =
-        iframeElement?.contentDocument ??
-        iframeElement?.contentWindow?.document;
+        iframeElement?.contentDocument ?? iframeElement?.contentWindow?.document;
 
       if (iframeDocument) {
         exerciseElements = iframeDocument.querySelectorAll(".exercise");
@@ -446,9 +409,7 @@ const ButtonContainer: React.FC = () => {
   // Initialize atlas functionality and load settings
   useEffect(() => {
     logger.info("Extension loaded.");
-    logger.info(
-      "Please star the repository if you like!\nhttps://github.com/operationcheck/atlas"
-    );
+    logger.info("Please star the repository if you like!\nhttps://github.com/operationcheck/atlas");
 
     (async () => {
       // Load settings
@@ -467,11 +428,7 @@ const ButtonContainer: React.FC = () => {
 
       if (settings.buttonPosition) {
         setButtonPosition(
-          settings.buttonPosition as
-            | "right-top"
-            | "right-bottom"
-            | "left-top"
-            | "left-bottom"
+          settings.buttonPosition as "right-top" | "right-bottom" | "left-top" | "left-bottom",
         );
       }
       if (settings.minimalMode !== undefined) {
@@ -511,16 +468,14 @@ const ButtonContainer: React.FC = () => {
     })();
 
     // Listen for storage changes
-    const listener = (changes: {
-      [key: string]: browser.Storage.StorageChange;
-    }) => {
+    const listener = (changes: { [key: string]: browser.Storage.StorageChange }) => {
       if (changes.buttonPosition) {
         setButtonPosition(
           changes.buttonPosition.newValue as
             | "right-top"
             | "right-bottom"
             | "left-top"
-            | "left-bottom"
+            | "left-bottom",
         );
       }
       if (changes.minimalMode) {
@@ -543,8 +498,7 @@ const ButtonContainer: React.FC = () => {
         notifyVideoCompleted = changes.notifyVideoCompleted.newValue as boolean;
       }
       if (changes.notifyAllVideosCompleted !== undefined) {
-        notifyAllVideosCompleted = changes.notifyAllVideosCompleted
-          .newValue as boolean;
+        notifyAllVideosCompleted = changes.notifyAllVideosCompleted.newValue as boolean;
       }
       if (changes.notifyTestDetected !== undefined) {
         notifyTestDetected = changes.notifyTestDetected.newValue as boolean;
@@ -648,11 +602,7 @@ const ButtonContainer: React.FC = () => {
 
             if (videoPlayer.ended) {
               handleVideoEnd();
-            } else if (
-              userInteracted &&
-              autoPlayEnabled &&
-              videoPlayer.paused
-            ) {
+            } else if (userInteracted && autoPlayEnabled && videoPlayer.paused) {
               videoPlayer.play().catch(logger.error);
             } else {
               videoPlayer.addEventListener("ended", handleVideoEnd);
@@ -722,26 +672,15 @@ const ButtonContainer: React.FC = () => {
     lastCheckedUrl = currentUrl;
     logger.info(`Checking URL for special content: ${currentUrl}`);
 
-    const specialKeywords = [
-      "evaluation_test",
-      "essay_test",
-      "evaluation_report",
-      "essay_report",
-    ];
-    const foundKeyword = specialKeywords.find((keyword) =>
-      currentUrl.includes(keyword)
-    );
+    const specialKeywords = ["evaluation_test", "essay_test", "evaluation_report", "essay_report"];
+    const foundKeyword = specialKeywords.find((keyword) => currentUrl.includes(keyword));
 
     if (foundKeyword) {
       const messages = {
-        evaluation_test:
-          "Evaluation test detected! Please complete the assessment.",
-        essay_test:
-          "Essay test detected! Please complete the written assignment.",
-        evaluation_report:
-          "Evaluation report detected! Please review the assessment results.",
-        essay_report:
-          "Essay report detected! Please review the essay feedback.",
+        evaluation_test: "Evaluation test detected! Please complete the assessment.",
+        essay_test: "Essay test detected! Please complete the written assignment.",
+        evaluation_report: "Evaluation report detected! Please review the assessment results.",
+        essay_report: "Essay report detected! Please review the essay feedback.",
       };
       const message = messages[foundKeyword as keyof typeof messages];
 

@@ -29,9 +29,7 @@ const archiver = require("archiver");
 
     // Find the background script file dynamically
     const assetsDir = "./dist/assets";
-    const backgroundFile = fs
-      .readdirSync(assetsDir)
-      .find((file) => file.startsWith("background-"));
+    const backgroundFile = fs.readdirSync(assetsDir).find((file) => file.startsWith("background-"));
 
     // Modify background for Firefox (Manifest V2 style)
     manifest.background = {
@@ -45,11 +43,7 @@ const archiver = require("archiver");
       manifest.content_scripts[0] = contentScript;
     }
 
-    fs.writeFileSync(
-      firefoxManifestPath,
-      JSON.stringify(manifest, null, 2),
-      "utf8"
-    );
+    fs.writeFileSync(firefoxManifestPath, JSON.stringify(manifest, null, 2), "utf8");
 
     // Copy all other files from dist to firefox directory
     const distFiles = fs.readdirSync("./dist");
@@ -76,9 +70,7 @@ const archiver = require("archiver");
     });
 
     output.on("close", () => {
-      console.log(
-        `Firefox extension created: ${archive.pointer()} total bytes`
-      );
+      console.log(`Firefox extension created: ${archive.pointer()} total bytes`);
 
       // Clean up firefox directory after zip creation
       fs.rmSync("./dist/firefox", { recursive: true, force: true });

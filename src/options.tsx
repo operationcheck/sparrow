@@ -19,15 +19,14 @@ function Options() {
 
   // Notification settings
   const [notifyVideoCompleted, setNotifyVideoCompleted] = useState(false);
-  const [notifyAllVideosCompleted, setNotifyAllVideosCompleted] =
-    useState(false);
+  const [notifyAllVideosCompleted, setNotifyAllVideosCompleted] = useState(false);
   const [notifyTestDetected, setNotifyTestDetected] = useState(true);
 
   useEffect(() => {
     // Listen for changes in storage
     const handleStorageChange = (
       changes: { [key: string]: browser.Storage.StorageChange },
-      areaName: string
+      areaName: string,
     ) => {
       if (areaName !== "local") return;
 
@@ -52,21 +51,17 @@ function Options() {
             | "right-top"
             | "right-bottom"
             | "left-top"
-            | "left-bottom"
+            | "left-bottom",
         );
       }
       if (changes.minimalMode !== undefined) {
         setMinimalMode(changes.minimalMode.newValue as boolean);
       }
       if (changes.notifyVideoCompleted !== undefined) {
-        setNotifyVideoCompleted(
-          changes.notifyVideoCompleted.newValue as boolean
-        );
+        setNotifyVideoCompleted(changes.notifyVideoCompleted.newValue as boolean);
       }
       if (changes.notifyAllVideosCompleted !== undefined) {
-        setNotifyAllVideosCompleted(
-          changes.notifyAllVideosCompleted.newValue as boolean
-        );
+        setNotifyAllVideosCompleted(changes.notifyAllVideosCompleted.newValue as boolean);
       }
       if (changes.notifyTestDetected !== undefined) {
         setNotifyTestDetected(changes.notifyTestDetected.newValue as boolean);
@@ -107,11 +102,7 @@ function Options() {
       }
       if (result.buttonPosition) {
         setButtonPosition(
-          result.buttonPosition as
-            | "right-top"
-            | "right-bottom"
-            | "left-top"
-            | "left-bottom"
+          result.buttonPosition as "right-top" | "right-bottom" | "left-top" | "left-bottom",
         );
       }
       if (result.minimalMode !== undefined) {
@@ -214,10 +205,7 @@ function Options() {
       <div style={{ marginBottom: "20px" }}>
         <h2>UI Settings</h2>
         <div style={{ marginBottom: "20px" }}>
-          <label
-            htmlFor="buttonPosition"
-            style={{ display: "block", marginBottom: "8px" }}
-          >
+          <label htmlFor="buttonPosition" style={{ display: "block", marginBottom: "8px" }}>
             Button Position
           </label>
           <select
@@ -225,11 +213,7 @@ function Options() {
             value={buttonPosition}
             onChange={(e) =>
               setButtonPosition(
-                e.target.value as
-                  | "right-top"
-                  | "right-bottom"
-                  | "left-top"
-                  | "left-bottom"
+                e.target.value as "right-top" | "right-bottom" | "left-top" | "left-bottom",
               )
             }
             style={{
