@@ -487,9 +487,7 @@ function extractDurationFromText(text: string): number {
 }
 
 function isListItemActiveForMovie(item: HTMLLIElement): boolean {
-  const marker = item.querySelector<HTMLElement>(
-    ":scope > :nth-child(1) > div:nth-child(1)",
-  );
+  const marker = item.querySelector<HTMLElement>(":scope > :nth-child(1) > div:nth-child(1)");
   return marker != null && getComputedStyle(marker).boxShadow !== "none";
 }
 
@@ -497,11 +495,7 @@ function isMovieItemPassed(item: HTMLLIElement): boolean {
   const icon = item.querySelector<HTMLElement>("div > svg") ?? item.querySelector("svg");
   const iconColor = icon ? getComputedStyle(icon).color : "";
   const text = item.textContent ?? "";
-  return (
-    iconColor === RGB_COLOR_GREEN ||
-    text.includes("視聴済み") ||
-    text.includes("理解した")
-  );
+  return iconColor === RGB_COLOR_GREEN || text.includes("視聴済み") || text.includes("理解した");
 }
 
 function isSupplementMovieItem(item: HTMLLIElement): boolean {
@@ -563,7 +557,10 @@ function getGroupByLabel(tp: TimeProgress, label: string): TimeProgressGroupWith
 }
 
 /** Add in-progress seconds for the active, not-yet-completed movie row (live page only). */
-function refineTimeProgressWithVideo(tp: TimeProgress, video: HTMLVideoElement | null): TimeProgress {
+function refineTimeProgressWithVideo(
+  tp: TimeProgress,
+  video: HTMLVideoElement | null,
+): TimeProgress {
   if (!video || !Number.isFinite(video.duration) || video.duration <= 0) {
     return tp;
   }
@@ -701,11 +698,15 @@ function ensureMovieTimeStyles(): void {
       white-space: nowrap;
     }
     .atlas-movie-time-root{
-      position: relative;
+      position: absolute;
+      top: 50%;
+      right: var(--atlas-parent-padding-right, 0px);
+      transform: translateY(-50%);
       display: flex;
       flex-direction: column;
       gap: 2px;
-      margin: 8px 0;
+      margin: 0;
+      z-index: 2147483646;
       font-size: 1.3rem;
       line-height: 1.3;
       color: #828282;
@@ -769,15 +770,21 @@ function renderGroupsDl(tp: TimeProgress): HTMLDListElement {
 
 function upsertChapterMovieTimeBlock(parent: HTMLElement, tp: TimeProgress): void {
   ensureMovieTimeStyles();
+  const parentStyle = window.getComputedStyle(parent);
+  if (parentStyle.position === "static") {
+    parent.style.position = "relative";
+  }
+  const parentPaddingRight = Number.parseFloat(parentStyle.paddingRight) || 0;
   let root = document.getElementById(MOVIE_TIME_ROOT_ID);
   if (!root) {
     root = document.createElement("div");
     root.id = MOVIE_TIME_ROOT_ID;
     root.className = "atlas-movie-time-root";
-    parent.prepend(root);
+    parent.appendChild(root);
   } else if (root.parentElement !== parent) {
-    parent.prepend(root);
+    parent.appendChild(root);
   }
+  root.style.setProperty("--atlas-parent-padding-right", `${parentPaddingRight}px`);
 
   let main = root.querySelector<HTMLDivElement>(".atlas-movie-time-main");
   if (!main) {
@@ -903,7 +910,9 @@ async function updateMovieTimeSummary(): Promise<void> {
       videoProgressCleanup = null;
     }
 
-    const courseAnchors = document.querySelectorAll<HTMLAnchorElement>(COURSE_CHAPTER_ANCHORS_SELECTOR);
+    const courseAnchors = document.querySelectorAll<HTMLAnchorElement>(
+      COURSE_CHAPTER_ANCHORS_SELECTOR,
+    );
     if (courseAnchors.length > 0) {
       const items = await Promise.all(
         Array.from(courseAnchors).map(async (anchor) => {
@@ -1043,10 +1052,7 @@ function setupMovieTime(): void {
   });
   movieTimeObserver.observe(document.body, { childList: true, subtree: true });
 
-  const onStorage = (
-    changes: Record<string, chrome.storage.StorageChange>,
-    area: string,
-  ) => {
+  const onStorage = (changes: Record<string, chrome.storage.StorageChange>, area: string) => {
     if (area !== "local" || changes[CHAPTER_PROGRESS_STORAGE_KEY] === undefined) {
       return;
     }
