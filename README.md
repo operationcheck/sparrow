@@ -13,7 +13,6 @@ A Chrome extension that supports video learning at N High School.
 <a href="#installation--usage"><strong>Installation & Usage</strong></a>
 </p>
 
-
 ## Introduction
 
 > **Note:** It is recommended that you fork the repository. Sometimes we keep it private.
