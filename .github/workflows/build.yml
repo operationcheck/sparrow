@@ -78,7 +78,7 @@ jobs:
 
       - name: Create Firefox zip
         run: |
-          bun firefox.cjs
+          bun scripts/build-firefox.ts
 
       - name: Create Chrome zip
         run: |

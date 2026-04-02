@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "build:firefox": "bun run build && bun firefox.cjs",
+    "build:firefox": "bun run build && bun scripts/build-firefox.ts",
     "preview": "vite preview",
     "typecheck": "tsc",
     "lint": "oxlint --quiet .",
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "2.0.0-beta.32",
+    "@types/archiver": "^7.0.0",
     "@types/chrome": "0.0.318",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.3",
