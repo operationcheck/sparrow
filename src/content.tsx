@@ -92,7 +92,7 @@ async function sendNotification(title: string, message: string): Promise<void> {
   }
 }
 
-// Miro functionality constants
+// Atlas functionality constants
 const RGB_COLOR_GREEN = "rgb(0, 197, 65)";
 const TYPE_MOVIE_ROUNDED_PLUS = "movie-rounded-plus";
 const REDIRECT_TIME = 3000;
@@ -104,7 +104,7 @@ interface ListItem {
   type: string;
 }
 
-// Global state for miro functionality
+// Global state for atlas functionality
 let isEnabled = true;
 let isValidPath: boolean | undefined;
 let lastExecutionTime = 0;
@@ -127,7 +127,7 @@ let notifyVideoCompleted = false;
 let notifyAllVideosCompleted = false;
 let notifyTestDetected = true;
 
-// Miro utility functions
+// Atlas utility functions
 function getIsValidPath(): boolean {
   if (isValidPath === undefined) {
     const url = new URL(window.location.href);
@@ -443,11 +443,11 @@ const ButtonContainer: React.FC = () => {
   const [backgroundPlay, setBackgroundPlay] = useState(false);
   const [hideUIState, setHideUIState] = useState(false);
 
-  // Initialize miro functionality and load settings
+  // Initialize atlas functionality and load settings
   useEffect(() => {
     logger.info("Extension loaded.");
     logger.info(
-      "Please star the repository if you like!\nhttps://github.com/operationcheck/miro"
+      "Please star the repository if you like!\nhttps://github.com/operationcheck/atlas"
     );
 
     (async () => {
@@ -506,8 +506,8 @@ const ButtonContainer: React.FC = () => {
         notifyTestDetected = settings.notifyTestDetected as boolean;
       }
 
-      // Start miro functionality
-      startMiroFunctionality();
+      // Start atlas functionality
+      startAtlasFunctionality();
     })();
 
     // Listen for storage changes
@@ -592,8 +592,8 @@ const ButtonContainer: React.FC = () => {
     };
   }, []);
 
-  // Miro functionality
-  function startMiroFunctionality() {
+  // Atlas functionality
+  function startAtlasFunctionality() {
     checkForSpecialContent();
     startUrlMonitoring();
 
@@ -926,7 +926,7 @@ Format your response as follows:
 
 // Create container for our button
 const container = document.createElement("div");
-container.id = "miro-extension";
+container.id = "atlas-extension";
 document.body.appendChild(container);
 
 // Render the button container

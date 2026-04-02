@@ -4,7 +4,7 @@ import browser from "webextension-polyfill";
 import { Button } from "./components/Button";
 
 function Options() {
-  // Miro settings
+  // Atlas settings
   const [enabled, setEnabled] = useState(true);
   const [autoPlayEnabled, setAutoPlayEnabled] = useState(true);
   const [backgroundAutoPlay, setBackgroundAutoPlay] = useState(false);
@@ -153,7 +153,7 @@ function Options() {
 
   return (
     <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
-      <h1>Miro - Settings</h1>
+      <h1>Atlas - Settings</h1>
       <div style={{ marginBottom: "20px" }}>
         <h2>Video Playback Settings</h2>
         <div style={{ marginBottom: "10px" }}>
@@ -298,7 +298,7 @@ function Options() {
         <div style={{ marginLeft: "auto", paddingLeft: "40px" }}>
           Please check{" "}
           <a
-            href="https://github.com/operationcheck/miro/"
+            href="https://github.com/operationcheck/atlas/"
             target="_blank"
             rel="noopener noreferrer"
           >

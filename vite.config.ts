@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 
 const manifest = defineManifest({
   manifest_version: 3,
-  name: "Miro",
+  name: "Atlas",
   version: "1.0.6",
   description: "An auto-play tool for report videos with the latest features",
   author: { email: "operationcheck@proton.me" },
@@ -22,7 +22,7 @@ const manifest = defineManifest({
       "38": "src/assets/icon38.png",
       "128": "src/assets/icon128.png",
     },
-    default_title: "Miro",
+    default_title: "Atlas",
   },
   background: {
     service_worker: "src/background.ts",

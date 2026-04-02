@@ -10,7 +10,7 @@ browser.runtime.onMessage.addListener((message, _, sendResponse) => {
       "notificationMessage" in message
     ) {
       const title =
-        typeof message.title === "string" ? message.title : "Miro Extension";
+        typeof message.title === "string" ? message.title : "Atlas Extension";
       const notificationMessage =
         typeof message.notificationMessage === "string"
           ? message.notificationMessage
@@ -20,7 +20,7 @@ browser.runtime.onMessage.addListener((message, _, sendResponse) => {
       createNotificationNow();
 
       function createNotificationNow() {
-        const notificationId = `miro-${Date.now()}`;
+        const notificationId = `atlas-${Date.now()}`;
         browser.notifications
           .create(notificationId, {
             type: "basic",
@@ -68,29 +68,29 @@ browser.runtime.onInstalled.addListener(() => {
   void browser.storage.local.get("enabled").then(() => {
     // Create the parent menu item
     browser.contextMenus.create({
-      id: "miro",
-      title: "Miro",
+      id: "atlas",
+      title: "Atlas",
       contexts: ["all"],
     });
 
-    // Create the toggle submenu items under Miro
+    // Create the toggle submenu items under Atlas
     browser.contextMenus.create({
       id: "toggle",
-      parentId: "miro",
+      parentId: "atlas",
       title: "Toggle enabled",
       contexts: ["all"],
     });
 
     browser.contextMenus.create({
       id: "copyExercise",
-      parentId: "miro",
+      parentId: "atlas",
       title: "Copy exercise to clipboard",
       contexts: ["all"],
     });
 
     browser.contextMenus.create({
       id: "askAI",
-      parentId: "miro",
+      parentId: "atlas",
       title: "Ask AI",
       contexts: ["all"],
     });
@@ -154,21 +154,21 @@ browser.runtime.onInstalled.addListener(() => {
 
     browser.contextMenus.create({
       id: "returnToChapter",
-      parentId: "miro",
+      parentId: "atlas",
       title: "Return to chapter on completion",
       contexts: ["all"],
     });
 
     browser.contextMenus.create({
       id: "hideUI",
-      parentId: "miro",
+      parentId: "atlas",
       title: "Hide UI buttons",
       contexts: ["all"],
     });
 
     browser.contextMenus.create({
       id: "openRepository",
-      parentId: "miro",
+      parentId: "atlas",
       title: "Open repository",
       contexts: ["all"],
     });
@@ -282,7 +282,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
       // Open the repository in a new tab
       browser.tabs
         .create({
-          url: "https://github.com/operationcheck/miro",
+          url: "https://github.com/operationcheck/atlas",
         })
         .then(() => {
           logger.info("Repository opened in new tab");

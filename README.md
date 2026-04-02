@@ -1,4 +1,4 @@
-# Miro
+# Atlas
 
 ## Overview
 
@@ -139,8 +139,8 @@ Access via extension icon or right-click menu:
 
 1. Clone and install dependencies:
 ```bash
-git clone https://github.com/operationcheck/miro.git
-cd miro
+git clone https://github.com/operationcheck/atlas.git
+cd atlas
 pnpm install
 ```
 

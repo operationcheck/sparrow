@@ -1,10 +1,10 @@
-# Privacy Policy for Miro Extension
+# Privacy Policy for Atlas Extension
 
 **Last updated: August 7, 2025**
 
 ## Overview
 
-This privacy policy describes how the Miro browser extension ("we", "our", or "extension") collects, uses, and protects your information when you use our educational video auto-play assistant extension.
+This privacy policy describes how the Atlas browser extension ("we", "our", or "extension") collects, uses, and protects your information when you use our educational video auto-play assistant extension.
 
 ## Information We Collect
 
@@ -120,8 +120,8 @@ This privacy policy describes how the Miro browser extension ("we", "our", or "e
 ## Contact Information
 
 ### Support and Questions
-- **GitHub Issues**: https://github.com/operationcheck/miro/issues
-- **Repository**: https://github.com/operationcheck/miro
+- **GitHub Issues**: https://github.com/operationcheck/atlas/issues
+- **Repository**: https://github.com/operationcheck/atlas
 - **Email**: operationcheck@proton.me
 
 ### Open Source
@@ -135,4 +135,4 @@ This extension is provided "as is" for educational assistance purposes. Users ar
 
 ---
 
-*This privacy policy is effective as of the last updated date and applies to all users of the Miro extension.*
+*This privacy policy is effective as of the last updated date and applies to all users of the Atlas extension.*
