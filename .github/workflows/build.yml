@@ -26,20 +26,14 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Build extension
-        run: bun run build
-
-      - name: Create Chrome zip
-        run: |
-          cd dist
-          zip -r ../chrome.zip .
-          cd ..
+      - name: Create Chrome zip (WXT)
+        run: bun run zip
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: chrome-${{ github.sha }}
-          path: chrome.zip
+          path: .output/*-chrome.zip
           retention-days: 7
 
       - name: Update Job Summary with Artifact Download Link
@@ -74,17 +68,10 @@ jobs:
         run: bun install
 
       - name: Build extension
-        run: bun run build
+        run: bun run zip
 
-      - name: Create Firefox zip
-        run: |
-          bun scripts/build-firefox.ts
-
-      - name: Create Chrome zip
-        run: |
-          cd dist
-          zip -r ../chrome.zip .
-          cd ..
+      - name: Create Firefox zip (WXT)
+        run: bun run zip:firefox
 
       - name: Get short SHA and timestamp
         id: vars
@@ -105,8 +92,8 @@ jobs:
             **Build Time**: ${{ env.TIMESTAMP }}
 
             ### Downloads
-            - **Chrome/Edge**: Download `chrome.zip`
-            - **Firefox**: Download `firefox.zip`
+            - **Chrome/Edge**: Download the generated `*-chrome.zip`
+            - **Firefox**: Download the generated `*-firefox.zip` (and optionally `*-sources.zip`)
 
             ### Installation
             1. Download the appropriate zip file for your browser
@@ -117,7 +104,8 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            dist/firefox.zip
-            chrome.zip
+            .output/*-firefox.zip
+            .output/*-chrome.zip
+            .output/*-sources.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

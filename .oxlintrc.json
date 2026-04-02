@@ -1,6 +1,13 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "ignorePatterns": ["dist/**", "node_modules/**", "bun.lock"],
+  "ignorePatterns": [
+    "dist/**",
+    ".output/**",
+    ".wxt/**",
+    ".wxt-skeleton/**",
+    "node_modules/**",
+    "bun.lock"
+  ],
   "env": {
     "browser": true
   }

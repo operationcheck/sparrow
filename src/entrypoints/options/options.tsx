@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import browser from "webextension-polyfill";
-import { Button } from "./components/Button";
+import { Button } from "../../components/Button";
 
 function Options() {
   // Atlas settings

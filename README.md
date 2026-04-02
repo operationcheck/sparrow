@@ -20,7 +20,7 @@ This extension makes it easier to watch videos on N Prep! When a video ends, it 
 ## Technology Stack
 
 - React 19 + TypeScript
-- Vite for fast development and builds
+- WXT for web extension development (built on Vite)
 - Chrome Extension Manifest V3
 - Modern web extension APIs
 
@@ -75,11 +75,17 @@ Build the extension:
 bun run build
 ```
 
-Build Firefox version:
+Build Firefox version (ZIP):
 
 ```bash
 bun run build:firefox
 ```
+
+Build outputs:
+
+- Chrome MV3 build: `.output/chrome-mv3/`
+- Firefox MV3 build: `.output/firefox-mv3/`
+- Zips: `.output/*-chrome.zip`, `.output/*-firefox.zip`, `.output/*-sources.zip`
 
 ### Chrome Installation
 
@@ -87,7 +93,7 @@ bun run build:firefox
 2. Open Chrome and go to `chrome://extensions/`
 3. Enable "Developer mode"
 4. Click "Load unpacked"
-5. Select the `dist` folder from where you cloned this repository
+5. Select the `.output/chrome-mv3` folder from where you cloned this repository
 6. Go to [https://www.nnn.ed.nico/](https://www.nnn.ed.nico/) and enjoy!
 
 ### Edge Installation
@@ -96,7 +102,7 @@ bun run build:firefox
 2. Open Edge and go to `edge://extensions/`
 3. Enable "Developer mode"
 4. Click "Load unpacked"
-5. Select the `dist` folder from where you cloned this repository
+5. Select the `.output/chrome-mv3` folder from where you cloned this repository
 6. Go to [https://www.nnn.ed.nico/](https://www.nnn.ed.nico/) and enjoy!
 
 ### Firefox Installation
@@ -104,7 +110,7 @@ bun run build:firefox
 1. Clone this repository
 2. Open Firefox and go to `about:debugging#/runtime/this-firefox`
 3. Click "Load temporary add-on"
-4. Select the manifest.json file in the `dist` folder
+4. Select the `manifest.json` file in the `.output/firefox-mv3` folder
 5. Go to `about:addons` and open the extension management
 6. Enable access to `https://www.nnn.ed.nico/*`
 7. Go to [https://www.nnn.ed.nico/](https://www.nnn.ed.nico/) and enjoy!

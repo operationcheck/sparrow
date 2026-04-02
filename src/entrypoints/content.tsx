@@ -1,10 +1,11 @@
-import { Play, Square, Settings } from "lucide-react";
+import { defineContentScript } from "wxt/utils/define-content-script";
+import { Play, Settings, Square } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import browser from "webextension-polyfill";
-import { Button } from "./components/Button";
-import logger from "./logger";
+import { Button } from "../components/Button";
+import logger from "../utils/logger";
 
 // Notification utility function
 async function sendNotification(title: string, message: string): Promise<void> {
@@ -49,9 +50,10 @@ async function sendNotification(title: string, message: string): Promise<void> {
       if ("Notification" in window) {
         if (Notification.permission === "granted") {
           try {
+            const iconUrl = browser.runtime.getURL("icon-128.png");
             new Notification(title, {
               body: message,
-              icon: "src/assets/icon128.png",
+              icon: iconUrl,
             });
             logger.info(`Native notification sent: ${message}`);
             return;
@@ -60,11 +62,12 @@ async function sendNotification(title: string, message: string): Promise<void> {
           }
         } else if (Notification.permission !== "denied") {
           try {
+            const iconUrl = browser.runtime.getURL("icon-128.png");
             const permission = await Notification.requestPermission();
             if (permission === "granted") {
               new Notification(title, {
                 body: message,
-                icon: "src/assets/icon128.png",
+                icon: iconUrl,
               });
               logger.info(`Native notification sent: ${message}`);
               return;
@@ -863,11 +866,24 @@ Format your response as follows:
   );
 };
 
-// Create container for our button
-const container = document.createElement("div");
-container.id = "atlas-extension";
-document.body.appendChild(container);
+function mountUi() {
+  if (document.getElementById("atlas-extension")) return;
 
-// Render the button container
-const root = createRoot(container);
-root.render(<ButtonContainer />);
+  // Create container for our button
+  const container = document.createElement("div");
+  container.id = "atlas-extension";
+  document.body.appendChild(container);
+
+  // Render the button container
+  const root = createRoot(container);
+  root.render(<ButtonContainer />);
+}
+
+export default defineContentScript({
+  matches: ["https://www.nnn.ed.nico/*"],
+  runAt: "document_idle",
+  main(ctx) {
+    if (!ctx.isValid) return;
+    mountUi();
+  },
+});
