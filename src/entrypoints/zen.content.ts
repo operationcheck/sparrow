@@ -113,6 +113,7 @@ let videoProgressCleanup: (() => void) | null = null;
 let movieTimeUrlPollId: number | null = null;
 let lastMovieTimeHref = "";
 let movieTimeStorageCleanup: (() => void) | null = null;
+const chapterPersistSignature = new Map<string, string>();
 
 /** Persisted chapter progress (CSR: fetch(same URL) returns ~2KB shell without lists). */
 const CHAPTER_PROGRESS_STORAGE_KEY = "atlasChapterTimeProgressV1";
@@ -679,6 +680,33 @@ function formatBadgeLine(tp: TimeProgress): string {
   return formatPrimaryLine(tp);
 }
 
+function serializeTimeProgress(tp: TimeProgress): string {
+  return JSON.stringify({
+    primary: tp.primary,
+    groups: tp.groups.map((g) => ({ label: g.label, goal: g.goal, current: g.current })),
+  });
+}
+
+function shouldIgnoreMovieTimeMutations(records: MutationRecord[]): boolean {
+  if (records.length === 0) {
+    return true;
+  }
+  return records.every((record) => {
+    const target = record.target;
+    if (!(target instanceof Element)) {
+      return false;
+    }
+    if (
+      target.closest(`#${MOVIE_TIME_ROOT_ID}`) ||
+      target.closest(`#${MOVIE_TIME_SUMMARY_ID}`) ||
+      target.closest(`.${MOVIE_TIME_BADGE_CLASS}`)
+    ) {
+      return true;
+    }
+    return false;
+  });
+}
+
 function ensureMovieTimeStyles(): void {
   const id = "atlas-movie-time-style";
   if (document.getElementById(id)) {
@@ -792,7 +820,10 @@ function upsertChapterMovieTimeBlock(parent: HTMLElement, tp: TimeProgress): voi
     main.className = "atlas-movie-time-main";
     root.appendChild(main);
   }
-  main.textContent = formatPrimaryLine(tp);
+  const mainText = formatPrimaryLine(tp);
+  if (main.textContent !== mainText) {
+    main.textContent = mainText;
+  }
 
   let remaining = root.querySelector<HTMLDivElement>(".atlas-movie-time-remaining");
   if (!remaining) {
@@ -801,7 +832,9 @@ function upsertChapterMovieTimeBlock(parent: HTMLElement, tp: TimeProgress): voi
     root.appendChild(remaining);
   }
   const remText = formatRemainingLine(tp);
-  remaining.textContent = remText;
+  if (remaining.textContent !== remText) {
+    remaining.textContent = remText;
+  }
   remaining.style.display = remText ? "" : "none";
 
   let groups = root.querySelector<HTMLDListElement>(".atlas-movie-time-groups");
@@ -810,7 +843,13 @@ function upsertChapterMovieTimeBlock(parent: HTMLElement, tp: TimeProgress): voi
     groups.className = "atlas-movie-time-groups";
     root.appendChild(groups);
   }
-  groups.replaceChildren(...renderGroupsDl(tp).childNodes);
+  const groupsSignature = JSON.stringify(
+    tp.groups.map((g) => ({ label: g.label, goal: g.goal, current: g.current })),
+  );
+  if (groups.dataset.signature !== groupsSignature) {
+    groups.dataset.signature = groupsSignature;
+    groups.replaceChildren(...renderGroupsDl(tp).childNodes);
+  }
 }
 
 function appendBadgeToAnchor(anchor: Element, tp: TimeProgress): void {
@@ -899,7 +938,12 @@ async function updateMovieTimeSummary(): Promise<void> {
         return;
       }
       timeCache.set(`chapter-url:${canonicalChapterUrl(location.href)}`, tp);
-      void persistChapterTimeProgress(tp);
+      const chapterPath = normalizeChapterStoragePath(location.href);
+      const signature = serializeTimeProgress(tp);
+      if (chapterPersistSignature.get(chapterPath) !== signature) {
+        chapterPersistSignature.set(chapterPath, signature);
+        void persistChapterTimeProgress(tp);
+      }
       const chapterParent = findChapterMovieTimeParent();
       if (chapterParent) {
         upsertChapterMovieTimeBlock(chapterParent, tp);
@@ -1047,7 +1091,10 @@ function setupMovieTime(): void {
   }, 800);
 
   void updateMovieTimeSummary();
-  movieTimeObserver = new MutationObserver(() => {
+  movieTimeObserver = new MutationObserver((records) => {
+    if (shouldIgnoreMovieTimeMutations(records)) {
+      return;
+    }
     scheduleMovieTimeUpdate();
   });
   movieTimeObserver.observe(document.body, { childList: true, subtree: true });
