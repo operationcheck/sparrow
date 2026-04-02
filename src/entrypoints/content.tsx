@@ -123,7 +123,9 @@ let notifyTestDetected = true;
 function getIsValidPath(): boolean {
   if (isValidPath === undefined) {
     const url = new URL(window.location.href);
-    isValidPath = /\/courses\/\w+\/chapters\/\w+\/movie/.test(url.pathname);
+    // ZEN pages have both chapter pages and optional "/movie" pages.
+    // We treat both as valid targets for video-related features.
+    isValidPath = /\/courses\/\d+\/chapters\/\d+(?:\/movie)?\/?/.test(url.pathname);
   }
   return isValidPath;
 }
@@ -194,6 +196,16 @@ async function moveElement(number: number): Promise<void> {
 function getVideoPlayer(): HTMLMediaElement | null {
   try {
     if (videoPlayer === null) {
+      // Prefer the main document video player (current ZEN UI).
+      const direct =
+        document.querySelector<HTMLMediaElement>("#video-player video") ??
+        document.querySelector<HTMLMediaElement>("video");
+      if (direct) {
+        videoPlayer = direct;
+        return videoPlayer;
+      }
+
+      // Fallback to legacy iframe-based player (older pages).
       const iframeElement = document.querySelector<HTMLIFrameElement>('iframe[title="教材"]');
       const iframeDocument =
         iframeElement?.contentDocument ?? iframeElement?.contentWindow?.document;
@@ -564,9 +576,10 @@ const ButtonContainer: React.FC = () => {
           }
           previousVideoPlayer = true;
           videoPlayer.setAttribute("playsinline", "");
-          videoPlayer.setAttribute("muted", "");
-          videoPlayer.setAttribute("autoplay", "");
-          videoPlayer.setAttribute("controls", "");
+          // Use properties for actual playback behavior.
+          videoPlayer.muted = true;
+          videoPlayer.autoplay = true;
+          videoPlayer.controls = true;
 
           if (videoPlayer.ended) {
             handleVideoEnd();
@@ -599,9 +612,9 @@ const ButtonContainer: React.FC = () => {
             previousVideoPlayer = true;
 
             videoPlayer.setAttribute("playsinline", "");
-            videoPlayer.setAttribute("muted", "");
-            videoPlayer.setAttribute("autoplay", "");
-            videoPlayer.setAttribute("controls", "");
+            videoPlayer.muted = true;
+            videoPlayer.autoplay = true;
+            videoPlayer.controls = true;
 
             if (videoPlayer.ended) {
               handleVideoEnd();
