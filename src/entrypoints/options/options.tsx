@@ -3,6 +3,50 @@ import { createRoot } from "react-dom/client";
 import browser from "webextension-polyfill";
 import { Button } from "../../components/Button";
 
+type ShortcutFieldKey =
+  | "shortcutPlayOrPause"
+  | "shortcutSeekBackward"
+  | "shortcutSeekForward"
+  | "shortcutMute"
+  | "shortcutFullscreen"
+  | "shortcutPictureInPicture"
+  | "shortcutTheaterMode"
+  | "shortcutExpandSection"
+  | "shortcutPreviousSection"
+  | "shortcutNextSection";
+
+function formatShortcutFromKeyboardEvent(event: KeyboardEvent): string | null {
+  const key = event.key;
+  const modifierKeys = new Set(["Control", "Shift", "Alt", "Meta"]);
+  if (modifierKeys.has(key)) {
+    return null;
+  }
+
+  const parts: string[] = [];
+  if (event.ctrlKey) {
+    parts.push("Ctrl");
+  }
+  if (event.shiftKey) {
+    parts.push("Shift");
+  }
+  if (event.altKey) {
+    parts.push("Alt");
+  }
+  if (event.metaKey) {
+    parts.push("Meta");
+  }
+
+  if (key === " ") {
+    parts.push("Space");
+  } else if (key.length === 1) {
+    parts.push(key.toUpperCase());
+  } else {
+    parts.push(key);
+  }
+
+  return parts.join("+");
+}
+
 function Options() {
   // Atlas settings
   const [enabled, setEnabled] = useState(true);
@@ -42,6 +86,69 @@ function Options() {
   const [shortcutPreviousSection, setShortcutPreviousSection] = useState("Ctrl+Shift+ArrowUp");
   const [shortcutNextSection, setShortcutNextSection] = useState("Ctrl+Shift+ArrowDown");
   const [shortcutSeekSeconds, setShortcutSeekSeconds] = useState(10);
+  const [recordingShortcutField, setRecordingShortcutField] = useState<ShortcutFieldKey | null>(null);
+
+  useEffect(() => {
+    if (!recordingShortcutField) {
+      return;
+    }
+
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setRecordingShortcutField(null);
+        return;
+      }
+
+      const formatted = formatShortcutFromKeyboardEvent(event);
+      if (!formatted) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      switch (recordingShortcutField) {
+        case "shortcutPlayOrPause":
+          setShortcutPlayOrPause(formatted);
+          break;
+        case "shortcutSeekBackward":
+          setShortcutSeekBackward(formatted);
+          break;
+        case "shortcutSeekForward":
+          setShortcutSeekForward(formatted);
+          break;
+        case "shortcutMute":
+          setShortcutMute(formatted);
+          break;
+        case "shortcutFullscreen":
+          setShortcutFullscreen(formatted);
+          break;
+        case "shortcutPictureInPicture":
+          setShortcutPictureInPicture(formatted);
+          break;
+        case "shortcutTheaterMode":
+          setShortcutTheaterMode(formatted);
+          break;
+        case "shortcutExpandSection":
+          setShortcutExpandSection(formatted);
+          break;
+        case "shortcutPreviousSection":
+          setShortcutPreviousSection(formatted);
+          break;
+        case "shortcutNextSection":
+          setShortcutNextSection(formatted);
+          break;
+      }
+
+      setRecordingShortcutField(null);
+    };
+
+    window.addEventListener("keydown", handleKeydown, true);
+    return () => {
+      window.removeEventListener("keydown", handleKeydown, true);
+    };
+  }, [recordingShortcutField]);
 
   useEffect(() => {
     // Listen for changes in storage
@@ -320,6 +427,45 @@ function Options() {
       });
   };
 
+  const startRecordingShortcut = (field: ShortcutFieldKey) => {
+    setRecordingShortcutField(field);
+  };
+
+  const stopRecordingShortcut = () => {
+    setRecordingShortcutField(null);
+  };
+
+  const renderShortcutInput = (
+    field: ShortcutFieldKey,
+    value: string,
+    setValue: (newValue: string) => void,
+    placeholder: string,
+  ) => {
+    const isRecording = recordingShortcutField === field;
+
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "8px" }}>
+        <input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder={placeholder}
+        />
+        <Button
+          onClick={() => {
+            if (isRecording) {
+              stopRecordingShortcut();
+            } else {
+              startRecordingShortcut(field);
+            }
+          }}
+          variant={isRecording ? "danger" : "other"}
+        >
+          {isRecording ? "Recording..." : "Record"}
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
       <h1>Atlas - Settings</h1>
@@ -552,58 +698,65 @@ function Options() {
       </div>
       <div style={{ marginBottom: "20px" }}>
         <h2>Shortcut Settings</h2>
-        <p style={{ marginTop: 0 }}>Examples: K, Ctrl+B, Ctrl+Shift+ArrowUp</p>
+        <p style={{ marginTop: 0 }}>
+          Examples: K, Ctrl+B, Ctrl+Shift+ArrowUp. Click "Record" and press keys.
+        </p>
         <div style={{ display: "grid", gap: "10px" }}>
-          <input
-            value={shortcutPlayOrPause}
-            onChange={(e) => setShortcutPlayOrPause(e.target.value)}
-            placeholder="Play/Pause"
-          />
-          <input
-            value={shortcutSeekBackward}
-            onChange={(e) => setShortcutSeekBackward(e.target.value)}
-            placeholder="Seek backward"
-          />
-          <input
-            value={shortcutSeekForward}
-            onChange={(e) => setShortcutSeekForward(e.target.value)}
-            placeholder="Seek forward"
-          />
-          <input
-            value={shortcutMute}
-            onChange={(e) => setShortcutMute(e.target.value)}
-            placeholder="Mute"
-          />
-          <input
-            value={shortcutFullscreen}
-            onChange={(e) => setShortcutFullscreen(e.target.value)}
-            placeholder="Fullscreen"
-          />
-          <input
-            value={shortcutPictureInPicture}
-            onChange={(e) => setShortcutPictureInPicture(e.target.value)}
-            placeholder="Picture in picture"
-          />
-          <input
-            value={shortcutTheaterMode}
-            onChange={(e) => setShortcutTheaterMode(e.target.value)}
-            placeholder="Theater mode"
-          />
-          <input
-            value={shortcutExpandSection}
-            onChange={(e) => setShortcutExpandSection(e.target.value)}
-            placeholder="Expand section"
-          />
-          <input
-            value={shortcutPreviousSection}
-            onChange={(e) => setShortcutPreviousSection(e.target.value)}
-            placeholder="Previous section"
-          />
-          <input
-            value={shortcutNextSection}
-            onChange={(e) => setShortcutNextSection(e.target.value)}
-            placeholder="Next section"
-          />
+          {renderShortcutInput(
+            "shortcutPlayOrPause",
+            shortcutPlayOrPause,
+            setShortcutPlayOrPause,
+            "Play/Pause",
+          )}
+          {renderShortcutInput(
+            "shortcutSeekBackward",
+            shortcutSeekBackward,
+            setShortcutSeekBackward,
+            "Seek backward",
+          )}
+          {renderShortcutInput(
+            "shortcutSeekForward",
+            shortcutSeekForward,
+            setShortcutSeekForward,
+            "Seek forward",
+          )}
+          {renderShortcutInput("shortcutMute", shortcutMute, setShortcutMute, "Mute")}
+          {renderShortcutInput(
+            "shortcutFullscreen",
+            shortcutFullscreen,
+            setShortcutFullscreen,
+            "Fullscreen",
+          )}
+          {renderShortcutInput(
+            "shortcutPictureInPicture",
+            shortcutPictureInPicture,
+            setShortcutPictureInPicture,
+            "Picture in picture",
+          )}
+          {renderShortcutInput(
+            "shortcutTheaterMode",
+            shortcutTheaterMode,
+            setShortcutTheaterMode,
+            "Theater mode",
+          )}
+          {renderShortcutInput(
+            "shortcutExpandSection",
+            shortcutExpandSection,
+            setShortcutExpandSection,
+            "Expand section",
+          )}
+          {renderShortcutInput(
+            "shortcutPreviousSection",
+            shortcutPreviousSection,
+            setShortcutPreviousSection,
+            "Previous section",
+          )}
+          {renderShortcutInput(
+            "shortcutNextSection",
+            shortcutNextSection,
+            setShortcutNextSection,
+            "Next section",
+          )}
           <input
             type="number"
             value={shortcutSeekSeconds}
