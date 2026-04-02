@@ -8,6 +8,7 @@ export default defineConfig({
   srcDir: "src",
   publicDir: "public",
   manifest: {
+    name: "Atlas",
     permissions: ["contextMenus", "storage", "notifications"],
     action: {
       default_title: "Atlas",
