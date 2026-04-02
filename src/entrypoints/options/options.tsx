@@ -454,7 +454,7 @@ function Options() {
         </div>
       </div>
       <div style={{ marginBottom: "20px" }}>
-        <h2>ZEN Study+ Imported Features</h2>
+        <h2>Plus content–style features</h2>
         <div style={{ marginBottom: "10px" }}>
           <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <input
