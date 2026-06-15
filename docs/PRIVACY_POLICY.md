@@ -1,10 +1,10 @@
-# Privacy Policy for Atlas Extension
+# Privacy Policy for Sparrow Extension
 
 **Last updated: August 7, 2025**
 
 ## Overview
 
-This privacy policy describes how the Atlas browser extension ("we", "our", or "extension") collects, uses, and protects your information when you use our educational video auto-play assistant extension.
+This privacy policy describes how the Sparrow browser extension ("we", "our", or "extension") collects, uses, and protects your information when you use our educational video auto-play assistant extension.
 
 ## Information We Collect
 
@@ -139,8 +139,8 @@ This privacy policy describes how the Atlas browser extension ("we", "our", or "
 
 ### Support and Questions
 
-- **GitHub Issues**: https://github.com/operationcheck/atlas/issues
-- **Repository**: https://github.com/operationcheck/atlas
+- **GitHub Issues**: https://github.com/operationcheck/sparrow/issues
+- **Repository**: https://github.com/operationcheck/sparrow
 - **Email**: operationcheck@proton.me
 
 ### Open Source
@@ -155,4 +155,4 @@ This extension is provided "as is" for educational assistance purposes. Users ar
 
 ---
 
-_This privacy policy is effective as of the last updated date and applies to all users of the Atlas extension._
+_This privacy policy is effective as of the last updated date and applies to all users of the Sparrow extension._

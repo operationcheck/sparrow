@@ -84,7 +84,7 @@ async function sendNotification(title: string, message: string): Promise<void> {
   }
 }
 
-// Atlas functionality constants
+// Sparrow functionality constants
 const RGB_COLOR_GREEN = "rgb(0, 197, 65)";
 const TYPE_MOVIE_ROUNDED_PLUS = "movie-rounded-plus";
 const REDIRECT_TIME = 3000;
@@ -96,7 +96,7 @@ interface ListItem {
   type: string;
 }
 
-// Global state for atlas functionality
+// Global state for sparrow functionality
 let isEnabled = true;
 let isValidPath: boolean | undefined;
 let lastExecutionTime = 0;
@@ -119,7 +119,7 @@ let notifyVideoCompleted = false;
 let notifyAllVideosCompleted = false;
 let notifyTestDetected = true;
 
-// Atlas utility functions
+// Sparrow utility functions
 function getIsValidPath(): boolean {
   if (isValidPath === undefined) {
     const url = new URL(window.location.href);
@@ -421,10 +421,12 @@ const ButtonContainer: React.FC = () => {
   const [backgroundPlay, setBackgroundPlay] = useState(false);
   const [hideUIState, setHideUIState] = useState(false);
 
-  // Initialize atlas functionality and load settings
+  // Initialize sparrow functionality and load settings
   useEffect(() => {
     logger.info("Extension loaded.");
-    logger.info("Please star the repository if you like!\nhttps://github.com/operationcheck/atlas");
+    logger.info(
+      "Please star the repository if you like!\nhttps://github.com/operationcheck/sparrow",
+    );
 
     (async () => {
       // Load settings
@@ -478,8 +480,8 @@ const ButtonContainer: React.FC = () => {
         notifyTestDetected = settings.notifyTestDetected as boolean;
       }
 
-      // Start atlas functionality
-      startAtlasFunctionality();
+      // Start sparrow functionality
+      startSparrowFunctionality();
     })();
 
     // Listen for storage changes
@@ -561,8 +563,8 @@ const ButtonContainer: React.FC = () => {
     };
   }, []);
 
-  // Atlas functionality
-  function startAtlasFunctionality() {
+  // Sparrow functionality
+  function startSparrowFunctionality() {
     checkForSpecialContent();
     startUrlMonitoring();
 
@@ -880,11 +882,11 @@ Format your response as follows:
 };
 
 function mountUi() {
-  if (document.getElementById("atlas-extension")) return;
+  if (document.getElementById("sparrow-extension")) return;
 
   // Create container for our button
   const container = document.createElement("div");
-  container.id = "atlas-extension";
+  container.id = "sparrow-extension";
   document.body.appendChild(container);
 
   // Render the button container
