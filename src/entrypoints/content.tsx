@@ -589,7 +589,6 @@ const ButtonContainer: React.FC = () => {
           previousVideoPlayer = true;
           videoPlayer.setAttribute("playsinline", "");
           // Use properties for actual playback behavior.
-          videoPlayer.muted = true;
           videoPlayer.autoplay = true;
           videoPlayer.controls = true;
 
@@ -624,7 +623,6 @@ const ButtonContainer: React.FC = () => {
             previousVideoPlayer = true;
 
             videoPlayer.setAttribute("playsinline", "");
-            videoPlayer.muted = true;
             videoPlayer.autoplay = true;
             videoPlayer.controls = true;
 
