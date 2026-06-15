@@ -87,13 +87,16 @@ async function sendNotification(title: string, message: string): Promise<void> {
 // Sparrow functionality constants
 const RGB_COLOR_GREEN = "rgb(0, 197, 65)";
 const TYPE_MOVIE_ROUNDED_PLUS = "movie-rounded-plus";
+const MOVIE_ICON_SELECTOR = 'svg[type^="movie-rounded"], svg[type^="movie"]';
+const LIST_ITEM_CLICK_SELECTOR = "> :nth-child(1) > div:nth-child(1)";
+const MATERIAL_LIST_ARIA_LABELS = ["必修教材リスト", "課外教材リスト"] as const;
 const REDIRECT_TIME = 3000;
 const COOL_TIME = 5000;
 
 interface ListItem {
   title: string;
   passed: boolean;
-  type: string;
+  type: "main" | "supplement" | "other";
 }
 
 // Global state for sparrow functionality
@@ -134,49 +137,56 @@ function findIndex(data: ListItem[]): number {
   return data.findIndex((item) => item.type === "main" && !item.passed);
 }
 
-function getList(): ListItem[] {
-  let elements: NodeListOf<HTMLLIElement>;
-
-  elements = document.querySelectorAll<HTMLLIElement>('ul[aria-label="必修教材リスト"] > li');
-
-  if (elements.length === 0) {
-    elements = document.querySelectorAll<HTMLLIElement>('ul[aria-label="課外教材リスト"] > li');
-
-    if (elements.length === 0) {
-      logger.error("No elements found.");
-      return [];
+function getMaterialListItems(): HTMLLIElement[] {
+  for (const ariaLabel of MATERIAL_LIST_ARIA_LABELS) {
+    const elements = document.querySelectorAll<HTMLLIElement>(`ul[aria-label="${ariaLabel}"] > li`);
+    if (elements.length > 0) {
+      return Array.from(elements);
     }
   }
 
-  return Array.from(elements).map((element) => {
+  logger.error("No elements found.");
+  return [];
+}
+
+function getList(): ListItem[] {
+  return getMaterialListItems().map((element) => {
     const titleElement = element.querySelector<HTMLSpanElement>("div div div span:nth-child(2)");
     const title = titleElement?.textContent?.trim() ?? "";
-    const iconElement = element.querySelector<HTMLElement>("div > svg");
+
+    if (!element.querySelector(MOVIE_ICON_SELECTOR)) {
+      return { title, passed: false, type: "other" };
+    }
+
+    const iconElement =
+      element.querySelector<HTMLElement>("div > svg") ?? element.querySelector("svg");
     const iconColor = iconElement ? window.getComputedStyle(iconElement).color : "";
-    const passed =
-      (iconColor === RGB_COLOR_GREEN ||
-        element.textContent?.includes("視聴済み") ||
-        element.textContent?.includes("理解した")) ??
-      false;
+    const passed = Boolean(
+      iconColor === RGB_COLOR_GREEN ||
+      element.textContent?.includes("視聴済み") ||
+      element.textContent?.includes("理解した"),
+    );
     const type =
       iconElement?.getAttribute("type") === TYPE_MOVIE_ROUNDED_PLUS ? "supplement" : "main";
     return { title, passed, type };
   });
 }
 
+function getListItemClickTarget(number: number): HTMLElement | null {
+  for (const ariaLabel of MATERIAL_LIST_ARIA_LABELS) {
+    const element = document.querySelector<HTMLElement>(
+      `ul[aria-label="${ariaLabel}"] > li:nth-child(${number}) ${LIST_ITEM_CLICK_SELECTOR}`,
+    );
+    if (element !== null) {
+      return element;
+    }
+  }
+  return null;
+}
+
 async function moveElement(number: number): Promise<void> {
   await new Promise<void>((resolve, reject) => {
-    let element: HTMLElement | null = null;
-
-    element = document.querySelector<HTMLElement>(
-      `ul[aria-label="必修教材リスト"] li:nth-child(${number}) div`,
-    );
-
-    if (element === null) {
-      element = document.querySelector<HTMLElement>(
-        `ul[aria-label="課外教材リスト"] li:nth-child(${number}) div`,
-      );
-    }
+    const element = getListItemClickTarget(number);
 
     if (element === null) {
       reject(new Error(`Error: cannot find an element with the number ${number}`));
