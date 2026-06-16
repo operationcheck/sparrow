@@ -8,10 +8,10 @@ export default defineConfig({
   srcDir: "src",
   publicDir: "public",
   manifest: {
-    name: "Sparrow",
+    name: "Atlas",
     permissions: ["contextMenus", "storage", "notifications"],
     action: {
-      default_title: "Sparrow",
+      default_title: "Atlas",
       default_icon: {
         "16": "/icon-16.png",
         "19": "/icon-19.png",

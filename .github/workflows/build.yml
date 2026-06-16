@@ -85,7 +85,7 @@ jobs:
           tag_name: release
           name: Release ${{ env.SHORT_SHA }}
           body: |
-            ## Sparrow Extension Release
+            ## Atlas Extension Release
 
             **Commit**: `${{ github.sha }}`
             **Branch**: `${{ github.ref_name }}`

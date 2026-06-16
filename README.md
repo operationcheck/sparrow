@@ -1,8 +1,8 @@
 <p align="center">
-  <img alt="Sparrow Logo" src="./docs/logo.png" width="100" />
+  <img alt="Atlas Logo" src="./docs/logo.png" width="100" />
 </p>
 
-<h3 align="center">Sparrow</h3>
+<h3 align="center">Atlas</h3>
 
 <p align="center">
 A Chrome extension that supports video learning at N High School.
@@ -167,8 +167,8 @@ Access via extension icon or right-click menu:
 1. Clone and install dependencies:
 
 ```bash
-git clone https://github.com/operationcheck/sparrow.git
-cd sparrow
+git clone https://github.com/operationcheck/atlas.git
+cd atlas
 bun install
 ```
 

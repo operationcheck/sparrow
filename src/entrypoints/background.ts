@@ -11,7 +11,7 @@ export default defineBackground(() => {
         "title" in message &&
         "notificationMessage" in message
       ) {
-        const title = typeof message.title === "string" ? message.title : "Sparrow Extension";
+        const title = typeof message.title === "string" ? message.title : "Atlas Extension";
         const notificationMessage =
           typeof message.notificationMessage === "string" ? message.notificationMessage : "";
 
@@ -19,7 +19,7 @@ export default defineBackground(() => {
         createNotificationNow();
 
         function createNotificationNow() {
-          const notificationId = `sparrow-${Date.now()}`;
+          const notificationId = `atlas-${Date.now()}`;
           const iconUrl = browser.runtime.getURL("icon-128.png");
           browser.notifications
             .create(notificationId, {
@@ -68,29 +68,29 @@ export default defineBackground(() => {
     void browser.storage.local.get("enabled").then(() => {
       // Create the parent menu item
       browser.contextMenus.create({
-        id: "sparrow",
-        title: "Sparrow",
+        id: "atlas",
+        title: "Atlas",
         contexts: ["all"],
       });
 
-      // Create the toggle submenu items under Sparrow
+      // Create the toggle submenu items under Atlas
       browser.contextMenus.create({
         id: "toggle",
-        parentId: "sparrow",
+        parentId: "atlas",
         title: "Toggle enabled",
         contexts: ["all"],
       });
 
       browser.contextMenus.create({
         id: "copyExercise",
-        parentId: "sparrow",
+        parentId: "atlas",
         title: "Copy exercise to clipboard",
         contexts: ["all"],
       });
 
       browser.contextMenus.create({
         id: "askAI",
-        parentId: "sparrow",
+        parentId: "atlas",
         title: "Ask AI",
         contexts: ["all"],
       });
@@ -154,21 +154,21 @@ export default defineBackground(() => {
 
       browser.contextMenus.create({
         id: "returnToChapter",
-        parentId: "sparrow",
+        parentId: "atlas",
         title: "Return to chapter on completion",
         contexts: ["all"],
       });
 
       browser.contextMenus.create({
         id: "hideUI",
-        parentId: "sparrow",
+        parentId: "atlas",
         title: "Hide UI buttons",
         contexts: ["all"],
       });
 
       browser.contextMenus.create({
         id: "openRepository",
-        parentId: "sparrow",
+        parentId: "atlas",
         title: "Open repository",
         contexts: ["all"],
       });
@@ -254,7 +254,7 @@ export default defineBackground(() => {
         // Open the repository in a new tab
         browser.tabs
           .create({
-            url: "https://github.com/operationcheck/sparrow",
+            url: "https://github.com/operationcheck/atlas",
           })
           .then(() => {
             logger.info("Repository opened in new tab");

@@ -55,11 +55,11 @@ const DEFAULT_SETTINGS: FeatureSettings = {
 };
 
 const INPUT_SELECTOR = "input, textarea, [contenteditable]";
-const WORD_COUNT_CLASS = "sparrow-word-count";
-const MOVIE_TIME_ROOT_ID = "sparrow-movie-time-root";
+const WORD_COUNT_CLASS = "atlas-word-count";
+const MOVIE_TIME_ROOT_ID = "atlas-movie-time-root";
 /** Course / monthly summary row (avoid duplicate id with chapter block). */
-const MOVIE_TIME_SUMMARY_ID = "sparrow-movie-time-summary";
-const STICKY_STYLE_ID = "sparrow-modify-sticky-movie-style";
+const MOVIE_TIME_SUMMARY_ID = "atlas-movie-time-summary";
+const STICKY_STYLE_ID = "atlas-modify-sticky-movie-style";
 const REFERENCE_SELECTOR = "iframe[aria-label='補助テキスト']";
 const MATHJAX_SELECTOR = "span.MathJax_CHTML";
 /** Prefer nested player video (matches current ZEN DOM). */
@@ -67,7 +67,7 @@ const DEFAULT_VIDEO_SELECTOR = "#video-player video, video";
 const SECTION_LIST_SELECTOR =
   ":is([aria-label$='教材リスト'], [aria-label='レポートリスト']) > li > :nth-child(1) > div:nth-child(1)";
 
-/** N-school list item: green icon or completion text (aligned with Sparrow content.tsx / zen-study-plus). */
+/** N-school list item: green icon or completion text (aligned with Atlas content.tsx / zen-study-plus). */
 const RGB_COLOR_GREEN = "rgb(0, 197, 65)";
 const TYPE_MOVIE_ROUNDED_PLUS = "movie-rounded-plus";
 
@@ -114,7 +114,7 @@ let movieTimeStorageCleanup: (() => void) | null = null;
 const chapterPersistSignature = new Map<string, string>();
 
 /** Persisted chapter progress (CSR: fetch(same URL) returns ~2KB shell without lists). */
-const CHAPTER_PROGRESS_STORAGE_KEY = "sparrowChapterTimeProgressV1";
+const CHAPTER_PROGRESS_STORAGE_KEY = "atlasChapterTimeProgressV1";
 
 type ChapterProgressMap = Record<string, TimeProgress>;
 
@@ -668,17 +668,17 @@ function shouldIgnoreMovieTimeMutations(records: MutationRecord[]): boolean {
 }
 
 function ensureMovieTimeStyles(): void {
-  const id = "sparrow-movie-time-style";
+  const id = "atlas-movie-time-style";
   if (document.getElementById(id)) {
     return;
   }
   const style = document.createElement("style");
   style.id = id;
   style.textContent = `
-    .sparrow-movie-time-root{
+    .atlas-movie-time-root{
       position: absolute;
       top: 50%;
-      right: var(--sparrow-parent-padding-right, 0px);
+      right: var(--atlas-parent-padding-right, 0px);
       transform: translateY(-50%);
       display: flex;
       flex-direction: column;
@@ -690,15 +690,15 @@ function ensureMovieTimeStyles(): void {
       color: #828282;
       white-space: nowrap;
     }
-    .sparrow-movie-time-root .sparrow-movie-time-main{
+    .atlas-movie-time-root .atlas-movie-time-main{
       font-weight: 600;
       color: #555;
     }
-    .sparrow-movie-time-root .sparrow-movie-time-remaining{
+    .atlas-movie-time-root .atlas-movie-time-remaining{
       font-size: 1.15rem;
       color: #828282;
     }
-    .sparrow-movie-time-root .sparrow-movie-time-groups{
+    .atlas-movie-time-root .atlas-movie-time-groups{
       display: none;
       position: absolute;
       z-index: 2147483647;
@@ -715,14 +715,14 @@ function ensureMovieTimeStyles(): void {
       grid-template-columns: max-content 1fr;
       gap: 8px 6px;
     }
-    .sparrow-movie-time-root:hover .sparrow-movie-time-groups{
+    .atlas-movie-time-root:hover .atlas-movie-time-groups{
       display: grid;
     }
-    .sparrow-movie-time-root .sparrow-movie-time-groups dt{
+    .atlas-movie-time-root .atlas-movie-time-groups dt{
       margin: 0;
       color: #828282;
     }
-    .sparrow-movie-time-root .sparrow-movie-time-groups dd{
+    .atlas-movie-time-root .atlas-movie-time-groups dd{
       margin: 0;
     }
   `;
@@ -757,17 +757,17 @@ function upsertChapterMovieTimeBlock(parent: HTMLElement, tp: TimeProgress): voi
   if (!root) {
     root = document.createElement("div");
     root.id = MOVIE_TIME_ROOT_ID;
-    root.className = "sparrow-movie-time-root";
+    root.className = "atlas-movie-time-root";
     parent.appendChild(root);
   } else if (root.parentElement !== parent) {
     parent.appendChild(root);
   }
-  root.style.setProperty("--sparrow-parent-padding-right", `${parentPaddingRight}px`);
+  root.style.setProperty("--atlas-parent-padding-right", `${parentPaddingRight}px`);
 
-  let main = root.querySelector<HTMLDivElement>(".sparrow-movie-time-main");
+  let main = root.querySelector<HTMLDivElement>(".atlas-movie-time-main");
   if (!main) {
     main = document.createElement("div");
-    main.className = "sparrow-movie-time-main";
+    main.className = "atlas-movie-time-main";
     root.appendChild(main);
   }
   const mainText = formatPrimaryLine(tp);
@@ -775,10 +775,10 @@ function upsertChapterMovieTimeBlock(parent: HTMLElement, tp: TimeProgress): voi
     main.textContent = mainText;
   }
 
-  let remaining = root.querySelector<HTMLDivElement>(".sparrow-movie-time-remaining");
+  let remaining = root.querySelector<HTMLDivElement>(".atlas-movie-time-remaining");
   if (!remaining) {
     remaining = document.createElement("div");
-    remaining.className = "sparrow-movie-time-remaining";
+    remaining.className = "atlas-movie-time-remaining";
     root.appendChild(remaining);
   }
   const remText = formatRemainingLine(tp);
@@ -787,10 +787,10 @@ function upsertChapterMovieTimeBlock(parent: HTMLElement, tp: TimeProgress): voi
   }
   remaining.style.display = remText ? "" : "none";
 
-  let groups = root.querySelector<HTMLDListElement>(".sparrow-movie-time-groups");
+  let groups = root.querySelector<HTMLDListElement>(".atlas-movie-time-groups");
   if (!groups) {
     groups = document.createElement("dl");
-    groups.className = "sparrow-movie-time-groups";
+    groups.className = "atlas-movie-time-groups";
     root.appendChild(groups);
   }
   const groupsSignature = JSON.stringify(
